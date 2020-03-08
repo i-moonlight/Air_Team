@@ -9,8 +9,8 @@ import { ImageDto } from './models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  readonly url = 'http://localhost:5000/v1/AirTeam/Search';
-  readonly enterKeyCode = '13';
+  readonly URL = 'http://localhost:5000/v1/AirTeam/Search';
+  readonly ENTER_CODE = '13';
   Images: ImageDto[];
   keyword: string;
   isLoading = false;
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
       }
 
       this.isLoading = true;
-      this.httpclient.get<ImageDto[]>(this.url + '?keyword=' + value).subscribe(data => {
+      this.httpclient.get<ImageDto[]>(this.URL + '?keyword=' + value).subscribe(data => {
           this.Images = data;
       }, error => {
           this.Images = [];
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
   }
 
   onKeyUp(event: KeyboardEvent) {
-    if (event.code === this.enterKeyCode) {
+    if (event.code === this.ENTER_CODE) {
       this.Find((event.target as HTMLInputElement).value);
     }
   }

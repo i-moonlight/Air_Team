@@ -58,7 +58,7 @@ describe('AppComponent', () => {
     const button: HTMLButtonElement = compiled.querySelector('button');
     button.click();
 
-    const req = httpMock.expectOne(`${app.url}?keyword=${keyword}`);
+    const req = httpMock.expectOne(`${app.URL}?keyword=${keyword}`);
     req.flush(dummyImages);
 
     expect(req.request.method).toBe('GET');
