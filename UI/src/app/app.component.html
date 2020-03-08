@@ -1,0 +1,21 @@
+<div>
+  <div class="search-row">
+    <div>
+      <input #search (keyup)="onKey($event)"/>
+      <button (click)="Find(search.value)">Search</button>
+    </div>
+  </div>
+  <div class="result-desc">result for: {{keyword}}</div>
+  <div class="result-notfound" *ngIf="Images && Images.length == 0">not result found</div>
+  <div *ngIf="isLoading" class="loading">
+    <img src="../assets/loading.gif"/>
+  </div>
+  <div class="result-grid">
+    <div *ngFor="let item of Images" class="thumb">
+      <div>
+        <a href="{{item.detailUrl}}" target="_blank"><img class="image" [src]="item.baseImageUrl + '_200.jpg'" title="{{item.description}}"></a>
+      </div>
+      <div>{{item.title}}</div>
+    </div>
+  </div>
+</div>
