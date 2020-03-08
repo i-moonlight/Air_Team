@@ -2,8 +2,12 @@ name: .NET Core
 
 on:
   push:
+    paths:
+      - Backend/**
     branches: [ master ]
   pull_request:
+    paths:
+      - Backend/**
     branches: [ master ]
 
 jobs:
