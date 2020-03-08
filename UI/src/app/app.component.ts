@@ -9,10 +9,11 @@ import { ImageDto } from './models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
+  readonly url = 'http://localhost:5000/v1/AirTeam/Search';
+  readonly enterKeyCode = '13';
   Images: ImageDto[];
   keyword = '';
   isLoading = false;
-  readonly url = 'http://localhost:5000/v1/AirTeam/Search';
 
   constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient) {
   }
@@ -41,7 +42,7 @@ export class AppComponent implements OnInit {
   }
 
   onKeyUp(event: KeyboardEvent) {
-    if (event.code === '13') {
+    if (event.code === this.enterKeyCode) {
       this.Find((event.target as HTMLInputElement).value);
     }
   }
