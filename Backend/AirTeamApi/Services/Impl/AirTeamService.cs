@@ -58,7 +58,7 @@ namespace AirTeamApi.Services.Impl
 
             var imageNode = node.QuerySelector("img");
             image.Description = HttpUtility.HtmlDecode(imageNode.Attributes["alt"].Value);
-            image.BaseImageUrl = _AirTeamHttpClient.BaseUrl + imageNode.Attributes["src"].Value.Replace("_200.jpg", "");
+            image.BaseImageUrl = _AirTeamHttpClient.BaseUrl + imageNode.Attributes["src"].Value;
 
             image.Title = HttpUtility.HtmlDecode(node.QuerySelector("div:last-child").InnerHtml);
             image.DetailUrl = _AirTeamHttpClient.BaseUrl + node.QuerySelector("a").Attributes["href"].Value;

@@ -46,9 +46,9 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
 
     const dummyImages: ImageDto[] = [
-      { imageId: '100', title: 'f14-A', baseImageUrl: 'image/notfound.jpg'  },
-      { imageId: '101', title: 'f14-b', baseImageUrl: 'image/notfound.jpg'  },
-      { imageId: '102', title: 'f14-c', baseImageUrl: 'image/notfound.jpg'  },
+      { imageId: '100', title: 'f14-A' },
+      { imageId: '101', title: 'f14-b' },
+      { imageId: '102', title: 'f14-c' },
     ];
 
     const keyword = 'f14';
