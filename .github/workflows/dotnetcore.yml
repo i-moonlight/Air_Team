@@ -18,4 +18,4 @@ jobs:
       with:
         dotnet-version: 3.1.102
     - name: Build with dotnet
-      run: dotnet build ..\..\..\Backend\AirTeamApi\AirTeamApi.csproj --configuration Release
+      run: dotnet build ./Backend/AirTeamApi/AirTeamApi.csproj --configuration Release
