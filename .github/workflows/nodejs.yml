@@ -28,9 +28,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+      
     - run: cd UI/
+      working-directory: ./UI  
     - run: npm ci
+      working-directory: ./UI  
     - run: npm run build
+      working-directory: ./UI  
     - run: npm test
+      working-directory: ./UI  
       env:
         CI: true
