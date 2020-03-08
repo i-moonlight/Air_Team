@@ -1,7 +1,7 @@
 <div>
   <div class="search-row">
     <div>
-      <input #search (keyup)="onKey($event)"/>
+      <input #search (keyup)="onKeyUp($event)"/>
       <button (click)="Find(search.value)">Search</button>
     </div>
   </div>

@@ -40,9 +40,9 @@ export class AppComponent implements OnInit {
       });
   }
 
-  onKey(event: any) {
-    if (event.keyCode === 13) {
-      this.Find(event.target.value);
+  onKeyUp(event: KeyboardEvent) {
+    if (event.code === '13') {
+      this.Find((event.target as HTMLInputElement).value);
     }
   }
 }
