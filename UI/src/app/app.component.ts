@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
   readonly url = 'http://localhost:5000/v1/AirTeam/Search';
   readonly enterKeyCode = '13';
   Images: ImageDto[];
-  keyword = '';
+  keyword: string;
   isLoading = false;
 
   constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient) {
