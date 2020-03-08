@@ -1,10 +1,12 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { Type } from '@angular/core';
-import { async, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { ImageDto } from './models';
 
 describe('AppComponent', () => {
+  let httpMock: HttpTestingController;
+  let fixture: ComponentFixture<AppComponent>;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -14,33 +16,34 @@ describe('AppComponent', () => {
         HttpClientTestingModule
       ]
     }).compileComponents();
+
+    fixture = TestBed.createComponent(AppComponent);
+    httpMock = fixture.debugElement.injector.get<HttpTestingController>(HttpTestingController as Type<HttpTestingController>);
+
   }));
 
+  afterEach(() => {
+    httpMock.verify();
+  });
+
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
   it(`should have isLoading 'false'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.isLoading).toEqual(false);
   });
 
   it('should render button', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
     const compiled = fixture.nativeElement;
     expect(compiled.querySelector('button').textContent).toContain('Search');
   });
 
   it('should successfull search', () => {
-    const fixture = TestBed.createComponent(AppComponent);
     const compiled = fixture.nativeElement;
     const app = fixture.componentInstance;
-
-    const httpMock = fixture.debugElement.injector.get<HttpTestingController>(HttpTestingController as Type<HttpTestingController>);
 
     const dummyImages: ImageDto[] = [
       { imageId: '100', title: 'f14-A', baseImageUrl: 'image/notfound.jpg'  },
@@ -67,7 +70,6 @@ describe('AppComponent', () => {
   });
 
   it('should prevent search', () => {
-    const fixture = TestBed.createComponent(AppComponent);
     const compiled = fixture.nativeElement;
     const app = fixture.componentInstance;
 
