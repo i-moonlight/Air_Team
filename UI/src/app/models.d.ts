@@ -1,7 +1,7 @@
 export interface ImageDto {
     imageId: string;
     title: string;
-    description: string;
+    description?: string;
     baseImageUrl: string;
-    detailUrl: string;
+    detailUrl?: string;
 }

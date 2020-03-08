@@ -24,16 +24,17 @@ export class AppComponent implements OnInit {
       this.keyword = value;
       const isValid = this.keyword && this.keyword.trim().length > 2;
       if (!isValid) {
+        this.Images = [];
+        this.changeRef.detectChanges();
         return;
       }
 
       this.isLoading = true;
       this.httpclient.get<ImageDto[]>(this.url + '?keyword=' + value).subscribe(data => {
           this.Images = data;
-          this.isLoading = false;
-          this.changeRef.detectChanges();
       }, error => {
           this.Images = [];
+      }, () => {
           this.isLoading = false;
           this.changeRef.detectChanges();
       });
