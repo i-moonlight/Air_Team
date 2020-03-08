@@ -34,7 +34,7 @@ namespace AirTeamApi.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IEnumerable<ImageDto>> Search([MinLength(3), MaxLength(15), Required(AllowEmptyStrings = false), FromQuery]string keyword)
+        public async Task<IEnumerable<ImageDto>> Search([MinLength(3), MaxLength(14), Required(AllowEmptyStrings = false), FromQuery]string keyword)
         {
             if (keyword?.Trim().Length < 3)
                 return new List<ImageDto>();
