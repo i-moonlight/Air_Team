@@ -78,6 +78,7 @@ namespace AirTeamApi.Tests.UnitTest
             var firstItem = resultImages.First();
             Assert.AreEqual("353153", firstItem.ImageId);
             Assert.AreEqual("Boeing 777-9X", firstItem.Title);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(firstItem.DetailUrl));
             StringAssert.EndsWith(firstItem.BaseImageUrl, "pics/353/353153_200.jpg");
 
             #endregion
