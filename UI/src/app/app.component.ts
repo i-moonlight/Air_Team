@@ -10,7 +10,7 @@ import { ImageDto } from './models';
 })
 export class AppComponent implements OnInit {
   readonly URL = 'http://localhost:5000/v1/AirTeam/Search';
-  readonly ENTER_CODE = '13';
+  readonly ENTER_KEY = 'Enter';
   Images: ImageDto[];
   keyword: string;
   isLoading = false;
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
   }
 
   onKeyUp(event: KeyboardEvent) {
-    if (event.code === this.ENTER_CODE) {
+    if (event.key === this.ENTER_KEY) {
       this.Find((event.target as HTMLInputElement).value);
     }
   }
