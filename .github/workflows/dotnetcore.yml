@@ -23,3 +23,5 @@ jobs:
         dotnet-version: 3.1.102
     - name: Build with dotnet
       run: dotnet build ./Backend/AirTeamApi/AirTeamApi.csproj --configuration Release
+    - name: Test with dotnet
+      run: dotnet test ./Backend/AirTeamApi.Tests/AirTeamApi.Tests.csproj
