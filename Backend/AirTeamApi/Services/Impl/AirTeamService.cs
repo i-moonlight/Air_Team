@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -27,12 +28,12 @@ namespace AirTeamApi.Services.Impl
         public async Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword = "")
         {
             var searchString = keyword?.Trim().ToLower().Replace(" ", "");
-            var htmlResponse = _Cache.GetString(searchString);
+            var htmlResponse = await _Cache.GetStringAsync(searchString, CancellationToken.None);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
                 htmlResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
-                _Cache.SetString(searchString, htmlResponse, new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(10) });
+                await _Cache.SetStringAsync(searchString, htmlResponse, new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(10) }, CancellationToken.None);
             }
 
             var htmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
@@ -58,12 +59,19 @@ namespace AirTeamApi.Services.Impl
 
             var imageNode = node.QuerySelector("img");
             image.Description = HttpUtility.HtmlDecode(imageNode.Attributes["alt"].Value);
-            image.BaseImageUrl = _AirTeamHttpClient.BaseUrl + imageNode.Attributes["src"].Value;
+            image.BaseImageUrl = Combine(_AirTeamHttpClient.BaseUrl?.ToString(), imageNode.Attributes["src"].Value);
 
             image.Title = HttpUtility.HtmlDecode(node.QuerySelector("div:last-child").InnerHtml);
-            image.DetailUrl = _AirTeamHttpClient.BaseUrl + node.QuerySelector("a").Attributes["href"].Value;
+            image.DetailUrl = Combine(_AirTeamHttpClient.BaseUrl?.ToString(), node.QuerySelector("a").Attributes["href"].Value);
 
             return image;
+        }
+
+        private string Combine(string uri1, string uri2)
+        {
+            uri1 = uri1?.TrimEnd('/');
+            uri2 = uri2?.TrimStart('/');
+            return $"{uri1}/{uri2}";
         }
     }
 }
