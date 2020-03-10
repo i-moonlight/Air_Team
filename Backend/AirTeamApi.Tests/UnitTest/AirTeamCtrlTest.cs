@@ -28,7 +28,7 @@ namespace AirTeamApi.Tests.UnitTest
 
 
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var sampleFilePath = Path.Combine(baseDir, "sample.html");
+            var sampleFilePath = Path.Combine(baseDir, "sampleResponse.txt");
             string resultHtml = File.ReadAllText(sampleFilePath);
             var keyword = "777x";
 

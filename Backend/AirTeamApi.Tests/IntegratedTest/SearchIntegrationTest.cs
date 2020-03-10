@@ -20,7 +20,7 @@ namespace AirTeamApi.Tests.IntegratedTest
             var client = await GetClient();
 
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var sampleFilePath = Path.Combine(baseDir, "sample.html");
+            var sampleFilePath = Path.Combine(baseDir, "sampleResponse.txt");
             string resultHtml = File.ReadAllText(sampleFilePath);
 
             DistributedCache.Setup(ca => ca.GetAsync("777x", It.IsAny<CancellationToken>()))
