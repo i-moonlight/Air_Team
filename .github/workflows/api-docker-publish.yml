@@ -5,7 +5,7 @@ on:
     # Publish `master` as Docker `latest` image.
     branches:
       - master
-    paths: ./version/**
+    paths: ./version/Backend.txt
 
     # Publish `v1.2.3` tags as releases.
     tags:
