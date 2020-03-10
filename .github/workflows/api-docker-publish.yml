@@ -1,11 +1,12 @@
-name: Docker
+name: api-docker
 
 on:
   push:
     # Publish `master` as Docker `latest` image.
     branches:
       - master
-    paths: ./version/Backend.txt
+    paths: 
+      - version/Backend.txt    
 
     # Publish `v1.2.3` tags as releases.
     tags:
