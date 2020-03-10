@@ -74,6 +74,12 @@ namespace AirTeamApi
 
             //app.UseAuthorization();
 
+            app.Use((context, next) =>
+            {
+                context.Response.Headers["Host-Name"] = Environment.MachineName;
+                return next.Invoke();
+            });
+
             app.UseCors(options => options.AllowAnyOrigin());
 
             app.UseEndpoints(endpoints =>
