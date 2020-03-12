@@ -9,13 +9,16 @@ import { ImageDto } from './models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  readonly URL = 'http://localhost:5000/v1/AirTeam/Search';
+  readonly BaseURL: string = window.Api_URL;
   readonly ENTER_KEY = 'Enter';
   Images: ImageDto[];
   keyword: string;
   isLoading = false;
 
   constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient) {
+      this.BaseURL= window.Api_URL;
+
+      this.BaseURL = this.BaseURL.endsWith('/') ? this.BaseURL : this.BaseURL + '/';
   }
 
   ngOnInit(): void {
@@ -31,7 +34,8 @@ export class AppComponent implements OnInit {
       }
 
       this.isLoading = true;
-      this.httpclient.get<ImageDto[]>(this.URL + '?keyword=' + value).subscribe(data => {
+      let url =  this.BaseURL  + 'v1/AirTeam/Search';
+      this.httpclient.get<ImageDto[]>(url + '?keyword=' + value).subscribe(data => {
           this.Images = data;
       }, error => {
           this.Images = [];

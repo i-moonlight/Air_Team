@@ -1,0 +1,1 @@
+window.Api_URL = 'http://localhost:5000'; 

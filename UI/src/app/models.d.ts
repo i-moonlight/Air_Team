@@ -5,3 +5,9 @@ export interface ImageDto {
     baseImageUrl?: string;
     detailUrl?: string;
 }
+
+declare global {
+    interface Window {
+        Api_URL: string;
+    }
+}
