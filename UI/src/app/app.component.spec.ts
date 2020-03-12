@@ -8,6 +8,7 @@ describe('AppComponent', () => {
   let httpMock: HttpTestingController;
   let fixture: ComponentFixture<AppComponent>;
   beforeEach(async(() => {
+    window.Api_URL = 'http://localhost:5000/';
     TestBed.configureTestingModule({
       declarations: [
         AppComponent
@@ -58,7 +59,7 @@ describe('AppComponent', () => {
     const button: HTMLButtonElement = compiled.querySelector('button');
     button.click();
 
-    const req = httpMock.expectOne(`${app.URL}?keyword=${keyword}`);
+    const req = httpMock.expectOne(`${app.searchApi}?keyword=${keyword}`);
     req.flush(dummyImages);
 
     expect(req.request.method).toBe('GET');
