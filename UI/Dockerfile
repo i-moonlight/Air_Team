@@ -10,4 +10,4 @@ FROM nginx:1.17-alpine
 EXPOSE 80 443
 COPY --from=build /usr/src/app/dist/AirTeamUI /usr/share/nginx/html
 WORKDIR /usr/share/nginx/html/assets
-RUN echo "window.Api_URL = 'http://apibackend/';" > config.js
+RUN echo "window.Api_URL = '';" > config.js
