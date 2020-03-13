@@ -30,6 +30,9 @@ namespace AirTeamApi
             // Add our Config object so it can be injected
             services.Configure<AirTeamSetting>(Configuration.GetSection("AirTeamSetting"));
 
+            // *If* you need access to generic IConfiguration this is **required**
+            services.AddSingleton<IConfiguration>(Configuration);
+
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
