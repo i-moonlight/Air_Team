@@ -1,6 +1,8 @@
 using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Impl;
+using AirTeamApi.Settings;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -21,8 +23,10 @@ namespace AirTeamApi.Tests.UnitTest
             var MockedClient = new Moq.Mock<IAirTeamHttpClient>();
             var htmlParseService = new HtmlParseService();
             var MockedCache = new Moq.Mock<IDistributedCache>();
+            var MockedIOptions = new Moq.Mock<IOptions<AirTeamSetting>>();
+            MockedIOptions.SetupGet(o => o.Value).Returns(new AirTeamSetting { CacheExprationMinutes = 15 });
 
-            var actualService = new AirTeamService(MockedCache.Object, MockedClient.Object, htmlParseService);
+            var actualService = new AirTeamService(MockedCache.Object, MockedClient.Object, htmlParseService, MockedIOptions.Object);
 
             var airTeamController = new Controllers.AirTeamController(actualService);
 

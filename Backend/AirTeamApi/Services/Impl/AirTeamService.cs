@@ -1,8 +1,10 @@
 ﻿using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Models;
+using AirTeamApi.Settings;
 using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +19,19 @@ namespace AirTeamApi.Services.Impl
         private readonly IAirTeamHttpClient _AirTeamHttpClient;
         private readonly IHtmlParseService _HtmlParserService;
         private readonly IDistributedCache _Cache;
+        private readonly AirTeamSetting _AirTeamSetting;
 
-        public AirTeamService(IDistributedCache cache, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService)
+        public AirTeamService(IDistributedCache cache, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> option)
         {
             _AirTeamHttpClient = httpClient;
             _HtmlParserService = htmlParserService;
             _Cache = cache;
+
+            if (option is null)
+            {
+                throw new ArgumentNullException(nameof(option));
+            }
+            _AirTeamSetting = option?.Value;
         }
 
         public async Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword = "")
@@ -33,7 +42,9 @@ namespace AirTeamApi.Services.Impl
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
                 htmlResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
-                await _Cache.SetStringAsync(searchString, htmlResponse, new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(10) }, CancellationToken.None);
+
+                var cacheEntryOption = new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
+                await _Cache.SetStringAsync(searchString, htmlResponse, cacheEntryOption, CancellationToken.None);
             }
 
             var htmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");

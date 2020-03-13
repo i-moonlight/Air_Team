@@ -1,5 +1,6 @@
 using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Impl;
+using AirTeamApi.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +25,11 @@ namespace AirTeamApi
         {
             services.AddControllers();
 
+            services.AddOptions();
+
+            // Add our Config object so it can be injected
+            services.Configure<AirTeamSetting>(Configuration.GetSection("AirTeamSetting"));
+
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
@@ -41,7 +47,7 @@ namespace AirTeamApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
 
-            services.AddHttpClient<IAirTeamHttpClient, AirTeamHttpClient>("name", httpClient =>
+            services.AddHttpClient<IAirTeamHttpClient, AirTeamHttpClient>("AirTeamClient", httpClient =>
             {
                 httpClient.BaseAddress = new Uri(Configuration.GetValue<string>("BaseUrl"));
             }).SetHandlerLifetime(TimeSpan.FromMinutes(5));
