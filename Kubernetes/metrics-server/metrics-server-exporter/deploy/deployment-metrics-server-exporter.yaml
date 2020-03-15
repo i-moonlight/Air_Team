@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-server-exporter
+  labels:
+    k8s-app: metrics-server-exporter
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      k8s-app: metrics-server-exporter
+  template:
+    metadata:
+      labels:
+        k8s-app: metrics-server-exporter
+    spec:
+      serviceAccountName: metrics-server-exporter
+      containers:
+      - name: metrics-server-exporter
+        image: vivareal/metrics-server-exporter:v0.0.6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /metrics
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 30
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /metrics
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+        resources:
+            requests:
+              memory: 150Mi
+              cpu: 100m
+            limits:
+              memory: 150Mi
+              cpu: 100m
+      restartPolicy: Always

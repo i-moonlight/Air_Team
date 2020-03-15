@@ -1,0 +1,8 @@
+namespace: kube-system
+
+resources:
+- standard/cluster-role-binding.yaml
+- standard/cluster-role.yaml
+- standard/deployment.yaml
+- standard/service-account.yaml
+- standard/service.yaml
