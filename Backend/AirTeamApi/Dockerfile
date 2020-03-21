@@ -10,7 +10,7 @@ COPY . ./
 RUN dotnet publish -c Release -v m -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.2-alpine3.11
 WORKDIR /app
 COPY --from=build-env /app/out .
 
