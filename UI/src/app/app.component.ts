@@ -26,6 +26,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.keyword = localStorage.getItem('keyword');
+    this.Images = JSON.parse(localStorage.getItem('lastdata'));
   }
 
   Find(value: string): void {
@@ -38,8 +40,11 @@ export class AppComponent implements OnInit {
       }
 
       this.isLoading = true;      
-      this.httpclient.get<ImageDto[]>(this.searchApi + '?keyword=' + value).subscribe(data => {
+      this.httpclient.get<ImageDto[]>(this.searchApi + '?keyword=' + value)
+      .subscribe(data => {
           this.Images = data;
+          localStorage.setItem('keyword', this.keyword);
+          localStorage.setItem('lastdata', JSON.stringify(this.Images));
       }, error => {
           this.Images = [];
       }, () => {
