@@ -32,7 +32,7 @@ scrape_configs:
   - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
 - job_name: 'metrics-server-exporter'
   static_configs:
-  - targets: ['metrics-server-exporter.default.svc.cluster.local:9104']
+  - targets: ['metrics-server-exporter.kube-system.svc.cluster.local:9104']
 
 
 
