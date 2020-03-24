@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
       - name: at-ui-instance
-        image: docker.pkg.github.com/hvojdani/air-team/air-team-ui:0.55.0
+        image: docker.pkg.github.com/hvojdani/air-team/air-team-ui:0.56.0
         ports:
         - containerPort: 80
