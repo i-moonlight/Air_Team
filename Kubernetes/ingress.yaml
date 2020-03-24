@@ -11,6 +11,10 @@ spec:
         backend:
           serviceName: apibackend
           servicePort: 80
+      - path: /swagger/
+        backend:
+          serviceName: apibackend
+          servicePort: 80
       - path: /
         backend:
           serviceName: uiapp
