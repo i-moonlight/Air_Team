@@ -4,18 +4,15 @@ metadata:
   name: my-ingress
 spec:
   rules:
+  - host: api.airimagefind.com
+    http:
+      paths:
+      - backend:
+          serviceName: apibackend
+          servicePort: 80
   - host: airimagefind.com
     http:
       paths:
-      - path: /v1/
-        backend:
-          serviceName: apibackend
-          servicePort: 80
-      - path: /swagger/
-        backend:
-          serviceName: apibackend
-          servicePort: 80
-      - path: /
-        backend:
+      - backend:
           serviceName: uiapp
           servicePort: 80
