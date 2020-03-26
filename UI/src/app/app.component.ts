@@ -15,13 +15,12 @@ export class AppComponent implements OnInit {
   keyword: string;
   isLoading = false;
 
-  get searchApi(){
+  get searchApi() {
     return this.BaseURL + 'v1/AirTeam/Search';
   }
 
   constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient) {
-      this.BaseURL= window.Api_URL;
-
+      this.BaseURL = window.Api_URL;
       this.BaseURL = this.BaseURL.endsWith('/') ? this.BaseURL : this.BaseURL + '/';
   }
 
@@ -39,7 +38,7 @@ export class AppComponent implements OnInit {
         return;
       }
 
-      this.isLoading = true;      
+      this.isLoading = true;
       this.httpclient.get<ImageDto[]>(this.searchApi + '?keyword=' + value)
       .subscribe(data => {
           this.Images = data;
