@@ -7,10 +7,16 @@ on:
   push:
     paths:
       - UI/**
+    paths-ignore: 
+      - UI/Dockerfile
+      - UI/README.md
     branches: [ master ]
   pull_request:
     paths:
       - UI/**
+    paths-ignore: 
+      - UI/Dockerfile
+      - UI/README.md
     branches: [ master ]
 
 jobs:
