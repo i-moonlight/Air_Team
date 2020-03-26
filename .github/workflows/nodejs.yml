@@ -6,15 +6,11 @@ name: Node.js CI
 on:
   push:
     paths:
-      - '!UI/Dockerfile'
-      - '!UI/README.md'
-      - 'UI/**'
+      - UI/**
     branches: [ master ]
   pull_request:
     paths:
-      - '!UI/Dockerfile'
-      - '!UI/README.md'
-      - 'UI/**'
+      - UI/**
     branches: [ master ]
 
 jobs:
