@@ -21,6 +21,9 @@ spec:
       containers:
       - name: seq-instance
         image: datalust/seq:latest
+        resources:
+          limits:
+            memory: "150Mi"
         env:
         - name: ACCEPT_EULA
           value: "Y"

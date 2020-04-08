@@ -19,6 +19,9 @@ spec:
       containers:
       - name: redis-instance
         image: redis:alpine
+        resources:
+          limits:
+            memory: "100Mi"
         volumeMounts:
           - mountPath: "/data"
             name: redisdata
