@@ -7,6 +7,16 @@ namespace AirTeamApi.Services.Impl
 {
     public class HtmlParseService : IHtmlParseService
     {
+        public HtmlNode QuerySelector(string htmlString, string query)
+        {
+            var html = new HtmlDocument();
+            html.LoadHtml(htmlString);
+
+            var document = html.DocumentNode;
+
+            var node = document.QuerySelector(query);
+            return node;
+        }
         public IEnumerable<HtmlNode> QuerySelectorAll(string htmlString, string query)
         {
             var html = new HtmlDocument();

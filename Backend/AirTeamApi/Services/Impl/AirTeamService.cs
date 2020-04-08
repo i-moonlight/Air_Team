@@ -41,9 +41,12 @@ namespace AirTeamApi.Services.Impl
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
-                htmlResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
+                var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
 
-                var cacheEntryOption = new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
+                var responseNode =_HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
+                htmlResponse = responseNode.WriteTo();
+
+                var cacheEntryOption = new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
                 await _Cache.SetStringAsync(searchString, htmlResponse, cacheEntryOption, CancellationToken.None);
             }
 
