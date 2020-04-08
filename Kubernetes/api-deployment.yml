@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
       - name: at-api-instance
-        image: docker.pkg.github.com/hvojdani/air-team/air-team-api:0.32.0
+        image: docker.pkg.github.com/hvojdani/air-team/air-team-api:0.34.0
         ports:
         - containerPort: 80

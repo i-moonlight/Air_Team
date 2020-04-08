@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo-deploy
+  name: seq-deploy
 spec:
   replicas: 1
   strategy:
