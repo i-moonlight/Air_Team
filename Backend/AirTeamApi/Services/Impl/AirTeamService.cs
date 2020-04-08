@@ -5,7 +5,6 @@ using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,46 +18,33 @@ namespace AirTeamApi.Services.Impl
     {
         private readonly IAirTeamHttpClient _AirTeamHttpClient;
         private readonly IHtmlParseService _HtmlParserService;
+        private readonly IDistributedCache _Cache;
         private readonly AirTeamSetting _AirTeamSetting;
-        private readonly IDatabase _RedisDatabase;
-        private readonly string _CachePrefix = "cache_";
 
-        public AirTeamService(IConnectionMultiplexer connectionMultiplexer, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> option)
+        public AirTeamService(IDistributedCache cache, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> option)
         {
             _AirTeamHttpClient = httpClient;
             _HtmlParserService = htmlParserService;
-            
+            _Cache = cache;
+
             if (option is null)
             {
                 throw new ArgumentNullException(nameof(option));
             }
             _AirTeamSetting = option?.Value;
-
-            _RedisDatabase = connectionMultiplexer?.GetDatabase();
-            
-            if (connectionMultiplexer == null)
-                throw new ArgumentNullException(nameof(connectionMultiplexer));
         }
 
         public async Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword = "")
         {
             var searchString = keyword?.Trim().ToLower().Replace(" ", "");
-            var cacheKey = this._CachePrefix + searchString;
+            var htmlResponse = await _Cache.GetStringAsync(searchString, CancellationToken.None);
 
-            var redisValue = await _RedisDatabase.StringGetAsync(cacheKey);
-            string htmlResponse;
-            
-            if (redisValue.IsNull)
+            if (string.IsNullOrWhiteSpace(htmlResponse))
             {
-                var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
-                var responseNode =_HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
+                htmlResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
 
-                htmlResponse = responseNode.WriteTo();
-                await _RedisDatabase.StringSetAsync(cacheKey, htmlResponse, TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes));
-            }
-            else
-            {
-                htmlResponse = redisValue.ToString();
+                var cacheEntryOption = new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
+                await _Cache.SetStringAsync(searchString, htmlResponse, cacheEntryOption, CancellationToken.None);
             }
 
             var htmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
