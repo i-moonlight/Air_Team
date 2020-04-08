@@ -6,7 +6,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Context;
+using Serilog.Extensions.Logging;
 using System;
 
 namespace AirTeamApi
@@ -57,6 +62,31 @@ namespace AirTeamApi
 
             services.AddTransient<IAirTeamService, AirTeamService>();
             services.AddTransient<IHtmlParseService, HtmlParseService>();
+            
+            
+
+            services.AddLogging(config =>
+            {
+                // clear out default configuration
+                config.ClearProviders();
+                config.AddDebug();
+                
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
+                {
+                    config.AddConsole();
+                }
+                else
+                {
+                    Log.Logger = new LoggerConfiguration()
+                        .MinimumLevel.Warning()
+                        .Enrich.WithProperty("HostName", Environment.MachineName)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Seq(Configuration.GetConnectionString("Seq"))
+                        .CreateLogger();
+                    
+                    config.AddSerilog();
+                }
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,7 +96,6 @@ namespace AirTeamApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
 
             //app.UseHttpsRedirection();
 

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deploy
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: seq
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: seq
+    spec:
+      containers:
+      - name: seq-instance
+        image: datalust/seq:latest
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        volumeMounts:
+          - mountPath: "/data"
+            name: seqdata
+        ports:
+        - name: ingestion
+          containerPort: 5341
+          protocol: TCP
+        - name: ui
+          containerPort: 80
+          protocol: TCP
+      volumes:
+        - name: seqdata
+          persistentVolumeClaim:
+            claimName: seqpvc

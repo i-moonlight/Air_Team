@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: seq-pv-volume
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  storageClassName: seq-local-storage
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /run/desktop/mnt/host/d/kube-volume/seq
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - docker-desktop
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seqpvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: seq-local-storage
+  resources:
+    requests:
+      storage: 2Gi

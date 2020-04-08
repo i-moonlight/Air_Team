@@ -3,6 +3,8 @@ using AirTeamApi.Services.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -15,9 +17,22 @@ namespace AirTeamApi.Controllers
     public class AirTeamController : ControllerBase
     {
         private IAirTeamService AirTeamService;
-        public AirTeamController(IAirTeamService airTeamService)
+        private ILogger<AirTeamController> Logger;
+        public AirTeamController(IAirTeamService airTeamService, ILogger<AirTeamController> logging)
         {
             AirTeamService = airTeamService;
+            Logger = logging;
+        }
+
+        /// <summary>
+        /// test serilog seq logging in production
+        /// </summary>
+        /// <param name="Message">simple text to log as error message</param>
+        /// <returns></returns>
+        [HttpGet, Route("testlog")]
+        public void TestLog([Required(AllowEmptyStrings = false), MaxLength(100)] string message)
+        {
+            Logger.LogWarning(message);
         }
 
         /// <summary>
