@@ -25,6 +25,8 @@ spec:
         env:
         - name: ACCEPT_EULA
           value: "Y"
+        - name: SEQ_CACHE_SYSTEMRAMTARGET 
+          value: "104860000"
         volumeMounts:
           - mountPath: "/data"
             name: seqdata
