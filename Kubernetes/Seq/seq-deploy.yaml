@@ -21,12 +21,12 @@ spec:
         image: datalust/seq:latest
         resources:
           limits:
-            memory: "150Mi"
+            memory: "256Mi"
         env:
         - name: ACCEPT_EULA
           value: "Y"
         - name: SEQ_CACHE_SYSTEMRAMTARGET 
-          value: "104860000"
+          value: "0.1"
         volumeMounts:
           - mountPath: "/data"
             name: seqdata
