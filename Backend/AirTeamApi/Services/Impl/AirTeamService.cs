@@ -36,26 +36,43 @@ namespace AirTeamApi.Services.Impl
 
         public async Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword = "")
         {
+            AirTeamApi.MetricsDefinition.MetricsDef.ApiCallTotal.Inc();
+
             var searchString = keyword?.Trim().ToLower().Replace(" ", "");
             var htmlResponse = await _Cache.GetStringAsync(searchString, CancellationToken.None);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
-                var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
-
-                var responseNode =_HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
-                htmlResponse = responseNode.WriteTo();
-
-                var cacheEntryOption = new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
-                await _Cache.SetStringAsync(searchString, htmlResponse, cacheEntryOption, CancellationToken.None);
+                AirTeamApi.MetricsDefinition.MetricsDef.ApiCallOutsideTotal.Inc();
+                htmlResponse = await GetFromAirTeamImages(searchString);
+            }
+            else
+            {
+                AirTeamApi.MetricsDefinition.MetricsDef.ApiCallCachedTotal.Inc();
             }
 
-            var htmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
-            var images = htmlNodes.Select(node => getImageFromNode(node));
+            var imageHtmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
+            IEnumerable<ImageDto> images = ExtractDataFromHtml(imageHtmlNodes);
 
             return images;
         }
 
+        private async Task<string> GetFromAirTeamImages(string searchString)
+        {
+            var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
+
+            var resultDivision = _HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
+            var resultHtml = resultDivision.WriteTo();
+
+            var cacheEntryOption = new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
+            await _Cache.SetStringAsync(searchString, resultHtml, cacheEntryOption, CancellationToken.None);
+            return resultHtml;
+        }
+
+        private IEnumerable<ImageDto> ExtractDataFromHtml(IEnumerable<HtmlNode> htmlNodes)
+        {
+            return htmlNodes.Select(node => getImageFromNode(node));
+        }
 
         /*
         <div class="thumb">

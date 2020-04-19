@@ -1,3 +1,4 @@
+using AirTeamApi.HealthCheck;
 using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Impl;
 using AirTeamApi.Settings;
@@ -7,11 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Microsoft.OpenApi.Models;
+using Prometheus;
 using Serilog;
-using Serilog.Context;
-using Serilog.Extensions.Logging;
 using System;
 
 namespace AirTeamApi
@@ -58,12 +57,14 @@ namespace AirTeamApi
             services.AddHttpClient<IAirTeamHttpClient, AirTeamHttpClient>("AirTeamClient", httpClient =>
             {
                 httpClient.BaseAddress = new Uri(Configuration.GetValue<string>("BaseUrl"));
-            }).SetHandlerLifetime(TimeSpan.FromMinutes(5));
+            });
 
             services.AddTransient<IAirTeamService, AirTeamService>();
             services.AddTransient<IHtmlParseService, HtmlParseService>();
-            
-            
+
+            services.AddHealthChecks()
+                .AddRedis(Configuration.GetConnectionString("Redis"))
+                .AddCheck<UriHealthCheck>("airteamimages.com_site");
 
             services.AddLogging(config =>
             {
@@ -109,7 +110,6 @@ namespace AirTeamApi
             });
 
             app.UseRouting();
-
             //app.UseAuthorization();
 
             app.Use((context, next) =>
@@ -123,7 +123,12 @@ namespace AirTeamApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
+                endpoints.MapMetrics("/metrics");
             });
+
+            Metrics.SuppressDefaultMetrics();
         }
+
     }
 }
