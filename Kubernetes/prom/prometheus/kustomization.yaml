@@ -8,6 +8,7 @@ resources:
 - role.yaml
 - service-account.yaml
 - role-binding.yaml
+- persistent-volume.yaml
 - deployment.yaml
 - service.yaml
 images:
