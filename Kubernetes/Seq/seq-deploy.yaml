@@ -21,7 +21,7 @@ spec:
         image: datalust/seq:latest
         resources:
           limits:
-            memory: "256Mi"
+            memory: "150Mi"
         env:
         - name: ACCEPT_EULA
           value: "Y"
