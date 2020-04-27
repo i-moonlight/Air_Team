@@ -1,5 +1,6 @@
 ### STAGE 1: Build ###
 FROM node:13.10-alpine AS build
+ENV CI=true
 WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm ci
