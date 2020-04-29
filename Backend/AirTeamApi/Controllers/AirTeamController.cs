@@ -51,7 +51,10 @@ namespace AirTeamApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IEnumerable<ImageDto>> Search([MinLength(3), MaxLength(14), Required(AllowEmptyStrings = false), FromQuery]string keyword)
         {
-            if (keyword?.Trim().Length < 3)
+            if (keyword == null)
+                throw new ArgumentNullException(keyword);
+
+            if (keyword.Trim().Length < 3)
                 return new List<ImageDto>();
 
             var result = await AirTeamService.SearchByKeyword(keyword);

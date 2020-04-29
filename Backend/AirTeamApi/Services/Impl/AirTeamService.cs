@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,24 +22,26 @@ namespace AirTeamApi.Services.Impl
         private readonly IDistributedCache _Cache;
         private readonly AirTeamSetting _AirTeamSetting;
 
-        public AirTeamService(IDistributedCache cache, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> option)
+        public AirTeamService(IDistributedCache cache, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> airTeamSetting)
         {
             _AirTeamHttpClient = httpClient;
             _HtmlParserService = htmlParserService;
             _Cache = cache;
 
-            if (option is null)
-            {
-                throw new ArgumentNullException(nameof(option));
-            }
-            _AirTeamSetting = option?.Value;
+            if (airTeamSetting == null)
+                throw new ArgumentNullException(nameof(airTeamSetting));
+           
+            _AirTeamSetting = airTeamSetting.Value;
         }
 
-        public async Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword = "")
+        public async Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword)
         {
+            if (keyword == null)
+                throw new ArgumentNullException(nameof(keyword));
+
             AirTeamApi.MetricsDefinition.MetricsDef.ApiCallTotal.Inc();
 
-            var searchString = keyword?.Trim().ToLower().Replace(" ", "");
+            var searchString = keyword.Trim().ToLower().Replace(" ", "");
             var htmlResponse = await _Cache.GetStringAsync(searchString, CancellationToken.None);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
@@ -98,7 +101,7 @@ namespace AirTeamApi.Services.Impl
             return image;
         }
 
-        private string Combine(string uri1, string uri2)
+        private string Combine(string? uri1, string? uri2)
         {
             uri1 = uri1?.TrimEnd('/');
             uri2 = uri2?.TrimStart('/');

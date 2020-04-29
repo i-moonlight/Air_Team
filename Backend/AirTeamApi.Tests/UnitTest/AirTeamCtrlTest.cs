@@ -35,6 +35,10 @@ namespace AirTeamApi.Tests.UnitTest
 
 
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+            if (baseDir == null)
+                throw new NullReferenceException("baseDirectory of test app is null");
+
             var sampleFilePath = Path.Combine(baseDir, "sampleResponse.txt");
             string resultHtml = File.ReadAllText(sampleFilePath);
             var keyword = "777x";
@@ -51,7 +55,7 @@ namespace AirTeamApi.Tests.UnitTest
             MockedCache.Setup(ca => ca.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns<string, CancellationToken>((key, token) =>
                 {
-                    return Task.FromResult<byte[]>(null);
+                    return Task.FromResult<byte[]>(null!);
                 });
 
 

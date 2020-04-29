@@ -13,8 +13,8 @@ namespace AirTeamApi.Tests.IntegratedTest
     public abstract class BaseIntegrationTest
     {
         public bool InitDone { get; private set; } = false;
-        public IHost WebHost { get; private set; }
-        public Mock<IDistributedCache> DistributedCache { get; private set; }
+        public IHost WebHost { get; private set; } = default!;
+        public Mock<IDistributedCache> DistributedCache { get; private set; } = default!;
 
         public async Task<HttpClient> GetClient()
         {

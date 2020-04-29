@@ -20,6 +20,10 @@ namespace AirTeamApi.Tests.IntegratedTest
             var client = await GetClient();
 
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+            if (baseDir == null)
+                throw new NullReferenceException("baseDirectory of test app is null");
+
             var sampleFilePath = Path.Combine(baseDir, "sampleResponse.txt");
             string resultHtml = File.ReadAllText(sampleFilePath);
 
