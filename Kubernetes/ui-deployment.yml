@@ -25,3 +25,5 @@ spec:
             memory: "64Mi"
         ports:
         - containerPort: 80
+      imagePullSecrets:
+        - name: regcred
