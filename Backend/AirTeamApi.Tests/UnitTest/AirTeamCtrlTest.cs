@@ -25,13 +25,13 @@ namespace AirTeamApi.Tests.UnitTest
             var htmlParseService = new HtmlParseService();
             var MockedCache = new Moq.Mock<IDistributedCache>();
             var MockedIOptions = new Moq.Mock<IOptions<AirTeamSetting>>();
-            var mock = new Mock<ILogger<Controllers.AirTeamController>>();
+            var mock = new Mock<ILogger<Controllers.v1.AirTeamController>>();
 
             MockedIOptions.SetupGet(o => o.Value).Returns(new AirTeamSetting { CacheExprationMinutes = 15 });
 
             var actualService = new AirTeamService(MockedCache.Object, MockedClient.Object, htmlParseService, MockedIOptions.Object);
 
-            var airTeamController = new Controllers.AirTeamController(actualService, mock.Object);
+            var airTeamController = new Controllers.v1.AirTeamController(actualService, mock.Object);
 
 
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
