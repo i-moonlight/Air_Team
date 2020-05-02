@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace AirTeamApi.Controllers
+namespace AirTeamApi.Controllers.v1
 {
     [ApiController]
     [Route("v1/[controller]")]

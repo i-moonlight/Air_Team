@@ -1,4 +1,5 @@
-﻿using AirTeamApi.Services.Contract;
+﻿using AirTeamApi.AirTeamMetrics;
+using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Models;
 using AirTeamApi.Settings;
 using Fizzler.Systems.HtmlAgilityPack;
@@ -24,13 +25,12 @@ namespace AirTeamApi.Services.Impl
 
         public AirTeamService(IDistributedCache cache, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> airTeamSetting)
         {
+            if (airTeamSetting == null)
+                throw new ArgumentNullException(nameof(airTeamSetting));
+
             _AirTeamHttpClient = httpClient;
             _HtmlParserService = htmlParserService;
             _Cache = cache;
-
-            if (airTeamSetting == null)
-                throw new ArgumentNullException(nameof(airTeamSetting));
-           
             _AirTeamSetting = airTeamSetting.Value;
         }
 
@@ -39,19 +39,19 @@ namespace AirTeamApi.Services.Impl
             if (keyword == null)
                 throw new ArgumentNullException(nameof(keyword));
 
-            AirTeamApi.MetricsDefinition.MetricsDef.ApiCallTotal.Inc();
+            MetricsDefinition.ApiCallTotal.WithLabels(Environment.MachineName).Inc();
 
             var searchString = keyword.Trim().ToLower().Replace(" ", "");
             var htmlResponse = await _Cache.GetStringAsync(searchString, CancellationToken.None);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
-                AirTeamApi.MetricsDefinition.MetricsDef.ApiCallOutsideTotal.Inc();
+                MetricsDefinition.ApiCallOutsideTotal.WithLabels(Environment.MachineName).Inc();
                 htmlResponse = await GetFromAirTeamImages(searchString);
             }
             else
             {
-                AirTeamApi.MetricsDefinition.MetricsDef.ApiCallCachedTotal.Inc();
+                MetricsDefinition.ApiCallCachedTotal.WithLabels(Environment.MachineName).Inc();
             }
 
             var imageHtmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
@@ -77,15 +77,6 @@ namespace AirTeamApi.Services.Impl
             return htmlNodes.Select(node => getImageFromNode(node));
         }
 
-        /*
-        <div class="thumb">
-		    <div class="image">
-			    <div class="id"> Image ID: 332788 </div>
-			    <a href="/boeing-777_N779XW_boeing_332788.html"><img src="pics/332/332788_200.jpg" alt="The First test airplane of Boeing 777-9X featuring GE's latest and big..." title="The First test airplane of Boeing 777-9X featuring GE's latest and big..." style="margin-top: 30.5px"></a>
-		    </div>
-		    <div>General Electric GE9X Engine</div>
-	    </div>
-        */
         private ImageDto getImageFromNode(HtmlNode node)
         {
             var image = new ImageDto();

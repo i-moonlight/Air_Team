@@ -17,25 +17,24 @@ namespace AirTeamApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             Configuration = configuration;
+            WebHostEnvironment = webHostEnvironment;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment  WebHostEnvironment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
             services.AddOptions();
 
-            // Add our Config object so it can be injected
             services.Configure<AirTeamSetting>(Configuration.GetSection("AirTeamSetting"));
 
-            // *If* you need access to generic IConfiguration this is **required**
-            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton(Configuration);
 
             services.AddCors(c =>
             {
@@ -67,16 +66,10 @@ namespace AirTeamApi
 
             services.AddLogging(config =>
             {
-                // clear out default configuration
-                config.ClearProviders();
-                config.AddDebug();
-                
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
+                if (!WebHostEnvironment.IsDevelopment())
                 {
-                    config.AddConsole();
-                }
-                else
-                {
+                    config.ClearProviders();
+
                     Log.Logger = new LoggerConfiguration()
                         .MinimumLevel.Warning()
                         .Enrich.WithProperty("HostName", Environment.MachineName)
@@ -90,9 +83,9 @@ namespace AirTeamApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (WebHostEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -101,8 +94,6 @@ namespace AirTeamApi
 
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
