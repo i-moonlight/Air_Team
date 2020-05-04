@@ -36,11 +36,14 @@ scrape_configs:
 - job_name: 'apibackend-metrics'
   scrape_interval: 30s
   scrape_timeout: 5s
-  metrics_path: /metrics
-  scheme: http
-  static_configs:
-  - targets: ['apibackend.default.svc.cluster.local:80']
-
-
-
+  kubernetes_sd_configs:
+    - role: pod
+      namespaces:
+        names:
+        - default
+  relabel_configs:
+    - source_labels: [__meta_kubernetes_pod_container_name]
+      regex: at-api-instance
+      action: keep
+        
   
