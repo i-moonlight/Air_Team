@@ -14,7 +14,7 @@
     <div *ngFor="let item of Images" class="thumb">
       <div>
         <a href="{{item.detailUrl}}" target="_blank">
-          <img class="image" [src]="item.baseImageUrl" title="{{item.description}}">
+          <img class="image" [src]="item.baseImageUrl" alt="loading" title="{{item.description}}">
         </a>
       </div>
       <div>{{item.title}}</div>

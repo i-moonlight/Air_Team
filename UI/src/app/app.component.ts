@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from './../environments/environment';
 import { ImageDto } from './models';
 
@@ -15,42 +16,64 @@ export class AppComponent implements OnInit {
   Images: ImageDto[];
   keyword: string;
   isLoading = false;
+  @ViewChild('search') searchInput: ElementRef;
 
-  get searchApi() {
-    return this.BaseURL + 'v1/AirTeam/Search';
-  }
-
-  constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient) {
+  constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient, private route: ActivatedRoute, private router: Router) {
       this.BaseURL = environment.Api_URL;
       this.BaseURL = this.BaseURL.endsWith('/') ? this.BaseURL : this.BaseURL + '/';
+     
   }
 
   ngOnInit(): void {
     this.keyword = localStorage.getItem('keyword');
     this.Images = JSON.parse(localStorage.getItem('lastdata'));
+
+    this.route.queryParams.subscribe(params => {
+      const value = params.keyword;
+      const isValid = this.IsValidKeyword(value);
+      if (!isValid) {
+        this.ClearResults();
+        return;
+      }
+      this.searchInput.nativeElement.value = value;
+      this.SearchApi(value);
+    })
+  }
+
+  private IsValidKeyword(value : string): boolean {
+    return value && value.trim().length > 2; 
+  }
+
+  private ClearResults(): void {
+    this.Images = [];
+        this.changeRef.detectChanges();
   }
 
   Find(value: string): void {
-      this.keyword = value;
-      const isValid = this.keyword && this.keyword.trim().length > 2;
+      const isValid = this.IsValidKeyword(value);
       if (!isValid) {
-        this.Images = [];
-        this.changeRef.detectChanges();
+        this.ClearResults();
         return;
       }
+      
+      this.router.navigate([],{queryParams:{keyword: value}});
 
-      this.isLoading = true;
-      this.httpclient.get<ImageDto[]>(this.searchApi + '?keyword=' + value)
-      .subscribe(data => {
-          this.Images = data;
-          localStorage.setItem('keyword', this.keyword);
-          localStorage.setItem('lastdata', JSON.stringify(this.Images));
-      }, error => {
-          this.Images = [];
-      }, () => {
-          this.isLoading = false;
-          this.changeRef.detectChanges();
-      });
+  }
+
+  private SearchApi(value: string){
+    this.isLoading = true;
+    const searchUrl = this.BaseURL + 'v1/AirTeam/Search';
+    this.httpclient.get<ImageDto[]>(searchUrl + '?keyword=' + value)
+    .subscribe(data => {
+        this.Images = data;
+        localStorage.setItem('keyword', this.keyword);
+        localStorage.setItem('lastdata', JSON.stringify(this.Images));
+    }, error => {
+        this.Images = [];
+    }, () => {
+        this.isLoading = false;
+        this.changeRef.detectChanges();
+    });
   }
 
   onKeyUp(event: KeyboardEvent) {
