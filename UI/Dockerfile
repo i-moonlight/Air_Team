@@ -10,5 +10,3 @@ RUN npm run release
 FROM nginx:1.17-alpine
 EXPOSE 80 443
 COPY --from=build /usr/src/app/dist/AirTeamUI /usr/share/nginx/html
-WORKDIR /usr/share/nginx/html/assets
-RUN echo "window.Api_URL = window.location.protocol + '//api.' + window.location.host.replace('www.','');" > config.js

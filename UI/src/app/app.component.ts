@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { environment } from './../environments/environment';
 import { ImageDto } from './models';
 
 @Component({
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit {
   }
 
   constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient) {
-      this.BaseURL = window.Api_URL;
+      this.BaseURL = environment.Api_URL;
       this.BaseURL = this.BaseURL.endsWith('/') ? this.BaseURL : this.BaseURL + '/';
   }
 

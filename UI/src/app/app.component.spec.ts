@@ -8,7 +8,7 @@ describe('AppComponent', () => {
   let httpMock: HttpTestingController;
   let fixture: ComponentFixture<AppComponent>;
   beforeEach(async(() => {
-    window.Api_URL = 'http://localhost:5000/';
+    
     TestBed.configureTestingModule({
       declarations: [
         AppComponent
