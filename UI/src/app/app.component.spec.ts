@@ -1,6 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { Type } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ImageDto } from './models';
 
@@ -14,7 +15,8 @@ describe('AppComponent', () => {
         AppComponent
       ],
       imports: [
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        AppRoutingModule
       ]
     }).compileComponents();
 
@@ -53,19 +55,14 @@ describe('AppComponent', () => {
     ];
 
     const keyword = 'f14';
-    const input: HTMLInputElement = compiled.querySelector('input');
-    input.value = keyword;
-
-    const button: HTMLButtonElement = compiled.querySelector('button');
-    button.click();
-
-    const req = httpMock.expectOne(`${app.searchApi}?keyword=${keyword}`);
+    
+    app.SearchApi(keyword);
+    
+    const req = httpMock.expectOne(`${app.searchUrl}?keyword=${keyword}`);
     req.flush(dummyImages);
 
     expect(req.request.method).toBe('GET');
     expect(app.Images).toEqual(dummyImages);
-    fixture.detectChanges();
-
     expect(compiled.querySelectorAll('.image').length).toBe(dummyImages.length);
 
   });
@@ -80,7 +77,6 @@ describe('AppComponent', () => {
     const button: HTMLButtonElement = compiled.querySelector('button');
     button.click();
 
-    expect(app.keyword).toBe(input.value);
     expect(app.Images.length).toEqual(0);
 
   });

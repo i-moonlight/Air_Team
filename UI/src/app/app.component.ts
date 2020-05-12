@@ -19,9 +19,9 @@ export class AppComponent implements OnInit {
   @ViewChild('search') searchInput: ElementRef;
 
   constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient, private route: ActivatedRoute, private router: Router) {
-      this.BaseURL = environment.Api_URL;
-      this.BaseURL = this.BaseURL.endsWith('/') ? this.BaseURL : this.BaseURL + '/';
-     
+    this.BaseURL = environment.Api_URL;
+    this.BaseURL = this.BaseURL.endsWith('/') ? this.BaseURL : this.BaseURL + '/';
+
   }
 
   ngOnInit(): void {
@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
 
     this.route.queryParams.subscribe(params => {
       const value = params.keyword;
+      this.keyword = value;
       const isValid = this.IsValidKeyword(value);
       if (!isValid) {
         this.ClearResults();
@@ -40,40 +41,46 @@ export class AppComponent implements OnInit {
     })
   }
 
-  private IsValidKeyword(value : string): boolean {
-    return value && value.trim().length > 2; 
+  private IsValidKeyword(value: string): boolean {
+    return value && value.trim().length > 2;
   }
 
   private ClearResults(): void {
     this.Images = [];
-        this.changeRef.detectChanges();
+    this.changeRef.detectChanges();
   }
 
   Find(value: string): void {
-      const isValid = this.IsValidKeyword(value);
-      if (!isValid) {
-        this.ClearResults();
-        return;
-      }
-      
-      this.router.navigate([],{queryParams:{keyword: value}});
+    const isValid = this.IsValidKeyword(value);
+    if (!isValid) {
+      this.ClearResults();
+      return;
+    }
+    this.keyword = value;
+    this.router.navigate([], { queryParams: { keyword: value } });
 
   }
 
-  private SearchApi(value: string){
+  get searchUrl() {
+    return this.BaseURL + 'v1/AirTeam/Search';
+  }
+
+  SearchApi(value: string) {
     this.isLoading = true;
-    const searchUrl = this.BaseURL + 'v1/AirTeam/Search';
-    this.httpclient.get<ImageDto[]>(searchUrl + '?keyword=' + value)
-    .subscribe(data => {
+    this.httpclient.get<ImageDto[]>(this.searchUrl + '?keyword=' + value)
+      .subscribe(data => {
         this.Images = data;
         localStorage.setItem('keyword', this.keyword);
         localStorage.setItem('lastdata', JSON.stringify(this.Images));
-    }, error => {
+        
+        this.changeRef.detectChanges();
+        
+      }, error => {
         this.Images = [];
-    }, () => {
+      }, () => {
         this.isLoading = false;
         this.changeRef.detectChanges();
-    });
+      });
   }
 
   onKeyUp(event: KeyboardEvent) {
