@@ -30,15 +30,19 @@ export class AppComponent implements OnInit {
 
     this.route.queryParams.subscribe(params => {
       const value = params.keyword;
-      this.keyword = value;
+      if(!value) {
+        return;
+      }
+
       const isValid = this.IsValidKeyword(value);
       if (!isValid) {
         this.ClearResults();
         return;
       }
+      this.keyword = value;
       this.searchInput.nativeElement.value = value;
       this.SearchApi(value);
-    })
+    });
   }
 
   private IsValidKeyword(value: string): boolean {
