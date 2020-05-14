@@ -1,6 +1,7 @@
 ﻿using AirTeamApi.Services.Contract;
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AirTeamApi.Services.Impl
@@ -15,9 +16,9 @@ namespace AirTeamApi.Services.Impl
             _HttpClient = httpClient;
         }
 
-        public async Task<string> SearchByKeyword(string keyword)
+        public async Task<string> SearchByKeyword(string keyword, CancellationToken cancellationToken)
         {
-            var httpResponseMessage = await _HttpClient.GetAsync($"search.php?srch_keyword={keyword}");
+            var httpResponseMessage = await _HttpClient.GetAsync($"search.php?srch_keyword={keyword}", cancellationToken);
             var responseHtmlBody = await httpResponseMessage.Content.ReadAsStringAsync();
 
             return responseHtmlBody;

@@ -23,7 +23,7 @@ namespace AirTeamApi.HealthCheck
                 BaseAddress = new Uri(_Configuration.GetValue<string>("BaseUrl"))
             };
 
-            using var httpResponseMessage = await httpClient.GetAsync("/");
+            using var httpResponseMessage = await httpClient.GetAsync("/", cancellationToken);
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {

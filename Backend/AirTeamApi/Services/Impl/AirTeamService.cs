@@ -40,8 +40,10 @@ namespace AirTeamApi.Services.Impl
 
             MetricsDefinition.ApiCallTotal.WithLabels(Environment.MachineName).Inc();
 
+            using CancellationTokenSource tokenSource = new CancellationTokenSource(800);
+
             var searchString = keyword.Trim().ToLower().Replace(" ", "", StringComparison.InvariantCultureIgnoreCase);
-            var htmlResponse = await _Cache.GetStringAsync(searchString, CancellationToken.None);
+            var htmlResponse = await _Cache.GetStringAsync(searchString, tokenSource.Token);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
@@ -61,13 +63,17 @@ namespace AirTeamApi.Services.Impl
 
         private async Task<string> GetFromAirTeamImages(string searchString)
         {
-            var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString);
+
+            using CancellationTokenSource httpTokenSource = new CancellationTokenSource(20000);
+            var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString, httpTokenSource.Token);
 
             var resultDivision = _HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
             var resultHtml = resultDivision.WriteTo();
 
+            using CancellationTokenSource tokenSource = new CancellationTokenSource(300);
+
             var cacheEntryOption = new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
-            await _Cache.SetStringAsync(searchString, resultHtml, cacheEntryOption, CancellationToken.None);
+            await _Cache.SetStringAsync(searchString, resultHtml, cacheEntryOption, tokenSource.Token);
             return resultHtml;
         }
 
