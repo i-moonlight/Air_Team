@@ -7,12 +7,12 @@ RUN dotnet restore
 
 # Copy everything else and build
 COPY . ./
-RUN dotnet publish -c Release -v m -o out
+RUN dotnet publish -c Release -v m -o pubdir
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.4-alpine3.11
 WORKDIR /app
-COPY --from=build-env /app/out .
+COPY --from=build-env /app/pubdir .
 
 ENV TZ=Asia/Tehran
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
