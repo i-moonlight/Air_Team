@@ -45,12 +45,12 @@ namespace AirTeamApi.Tests.UnitTest
 
             #region get from httpClient
             var calledHttp = false;
-            MockedClient.Setup(cl => cl.SearchByKeyword(Moq.It.IsAny<string>()))
-                .Returns<string>(key =>
-                {
-                    calledHttp = true;
-                    return Task.FromResult(resultHtml);                    
-                });
+            MockedClient.Setup(cl => cl.SearchByKeyword(Moq.It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns<string, CancellationToken>((key, token) =>
+                 {
+                     calledHttp = true;
+                     return Task.FromResult(resultHtml);
+                 });
 
             MockedCache.Setup(ca => ca.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns<string, CancellationToken>((key, token) =>
@@ -64,9 +64,9 @@ namespace AirTeamApi.Tests.UnitTest
             Assert.AreEqual(25, resultImages.Count());
             Assert.IsTrue(calledHttp);
             #endregion
-           
+
             #region get from cache
-            MockedClient.Setup(cl => cl.SearchByKeyword(Moq.It.IsAny<string>())).Throws(new InvalidOperationException("Must Use Cache"));
+            MockedClient.Setup(cl => cl.SearchByKeyword(Moq.It.IsAny<string>(), It.IsAny<CancellationToken>())).Throws(new InvalidOperationException("Must Use Cache"));
 
             var calledCache = false;
             MockedCache.Setup(ca => ca.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -78,14 +78,14 @@ namespace AirTeamApi.Tests.UnitTest
                 });
 
             resultImages = await airTeamController.Search(keyword);
-            
+
             Assert.AreEqual(25, resultImages.Count());
             Assert.IsTrue(calledCache);
             #endregion
 
 
             #region check result fields
-            
+
             var firstItem = resultImages.First();
             Assert.AreEqual("353153", firstItem.ImageId);
             Assert.AreEqual("Boeing 777-9X", firstItem.Title);
