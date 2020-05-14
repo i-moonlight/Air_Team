@@ -24,7 +24,7 @@ namespace AirTeamApi
         }
 
         public IConfiguration Configuration { get; }
-        public IWebHostEnvironment  WebHostEnvironment { get; }
+        public IWebHostEnvironment WebHostEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -76,7 +76,7 @@ namespace AirTeamApi
                         .Enrich.FromLogContext()
                         .WriteTo.Seq(Configuration.GetConnectionString("Seq"))
                         .CreateLogger();
-                    
+
                     config.AddSerilog();
                 }
             });

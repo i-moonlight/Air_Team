@@ -8,7 +8,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +40,7 @@ namespace AirTeamApi.Services.Impl
 
             MetricsDefinition.ApiCallTotal.WithLabels(Environment.MachineName).Inc();
 
-            var searchString = keyword.Trim().ToLower().Replace(" ", "");
+            var searchString = keyword.Trim().ToLower().Replace(" ", "", StringComparison.InvariantCultureIgnoreCase);
             var htmlResponse = await _Cache.GetStringAsync(searchString, CancellationToken.None);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
@@ -80,7 +79,7 @@ namespace AirTeamApi.Services.Impl
         private ImageDto getImageFromNode(HtmlNode node)
         {
             var image = new ImageDto();
-            image.ImageId = node.QuerySelector(".id").InnerText.Replace("Image ID:", "").Trim();
+            image.ImageId = node.QuerySelector(".id").InnerText.Replace("Image ID:", "", StringComparison.InvariantCultureIgnoreCase).Trim();
 
             var imageNode = node.QuerySelector("img");
             image.Description = HttpUtility.HtmlDecode(imageNode.Attributes["alt"].Value);

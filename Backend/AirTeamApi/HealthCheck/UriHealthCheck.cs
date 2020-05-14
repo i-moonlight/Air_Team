@@ -17,9 +17,10 @@ namespace AirTeamApi.HealthCheck
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            using var httpClient = new HttpClient() {
-                Timeout = TimeSpan.FromSeconds(5), 
-                BaseAddress = new Uri(_Configuration.GetValue<string>("BaseUrl")) 
+            using var httpClient = new HttpClient()
+            {
+                Timeout = TimeSpan.FromSeconds(5),
+                BaseAddress = new Uri(_Configuration.GetValue<string>("BaseUrl"))
             };
 
             using var httpResponseMessage = await httpClient.GetAsync("/");
