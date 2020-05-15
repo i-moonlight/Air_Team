@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using Prometheus;
 using Serilog;
 using System;
+using System.Net.Http;
 
 namespace AirTeamApi
 {
@@ -55,6 +56,9 @@ namespace AirTeamApi
             services.AddHttpClient<IAirTeamHttpClient, AirTeamHttpClient>("AirTeamClient", httpClient =>
             {
                 httpClient.BaseAddress = new Uri(Configuration.GetValue<string>("BaseUrl"));
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                return new HttpClientHandler() { UseProxy = false };
             });
 
             services.AddTransient<IAirTeamService, AirTeamService>();
