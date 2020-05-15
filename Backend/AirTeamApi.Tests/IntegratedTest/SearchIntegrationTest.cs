@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace AirTeamApi.Tests.IntegratedTest
 {
     [TestClass]
-    public class SearchIntegrationTest: BaseIntegrationTest
+    public class SearchIntegrationTest : BaseIntegrationTest
     {
         [TestMethod]
         public async Task SearchByClient()

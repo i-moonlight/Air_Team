@@ -18,7 +18,7 @@ namespace AirTeamApi.Services.Impl
 
         public async Task<string> SearchByKeyword(string keyword, CancellationToken cancellationToken)
         {
-            using var httpResponseMessage = await _HttpClient.GetAsync($"search.php?srch_keyword={keyword}", HttpCompletionOption.ResponseHeadersRead,cancellationToken);
+            using var httpResponseMessage = await _HttpClient.GetAsync($"search.php?srch_keyword={keyword}", HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             httpResponseMessage.EnsureSuccessStatusCode();
             var responseHtmlBody = await httpResponseMessage.Content.ReadAsStringAsync();
 

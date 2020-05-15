@@ -1,5 +1,4 @@
-﻿using AirTeamApi.Services.Contract;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +40,7 @@ namespace AirTeamApi.Tests.IntegratedTest
                     // Add TestServer
                     webHost.UseStartup<Startup>();
                     // Specify the environment
-                   // webHost.UseEnvironment("Development");
+                    // webHost.UseEnvironment("Development");
                     webHost.ConfigureTestServices(services =>
                     {
                         services.AddSingleton(DistributedCache.Object);
