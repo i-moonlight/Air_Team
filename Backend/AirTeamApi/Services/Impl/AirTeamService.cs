@@ -40,10 +40,8 @@ namespace AirTeamApi.Services.Impl
 
             MetricsDefinition.ApiCallTotal.WithLabels(Environment.MachineName).Inc();
 
-            using CancellationTokenSource tokenSource = new CancellationTokenSource(800);
-
             var searchString = keyword.Trim().ToLower().Replace(" ", "", StringComparison.InvariantCultureIgnoreCase);
-            var htmlResponse = await _Cache.GetStringAsync(searchString, tokenSource.Token);
+            var htmlResponse = await _Cache.GetStringAsync(searchString);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
@@ -70,10 +68,8 @@ namespace AirTeamApi.Services.Impl
             var resultDivision = _HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
             var resultHtml = resultDivision.WriteTo();
 
-            using CancellationTokenSource tokenSource = new CancellationTokenSource(300);
-
             var cacheEntryOption = new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
-            await _Cache.SetStringAsync(searchString, resultHtml, cacheEntryOption, tokenSource.Token);
+            await _Cache.SetStringAsync(searchString, resultHtml, cacheEntryOption);
             return resultHtml;
         }
 
