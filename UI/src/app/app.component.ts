@@ -33,10 +33,10 @@ export class AppComponent implements OnInit {
       if(!value) {
         return;
       }
-
+      
+      this.ClearResults();
       const isValid = this.IsValidKeyword(value);
       if (!isValid) {
-        this.ClearResults();
         return;
       }
       this.keyword = value;
