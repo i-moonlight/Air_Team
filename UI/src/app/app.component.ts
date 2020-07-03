@@ -11,7 +11,7 @@ import { ImageDto } from './models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  readonly BaseURL: string = window.Api_URL;
+  readonly BaseURL: string;
   readonly ENTER_KEY = 'Enter';
   Images: ImageDto[];
   keyword: string;
