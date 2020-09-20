@@ -19,10 +19,11 @@ spec:
     spec:
       containers:
       - name: at-ui-instance
-        image: docker.pkg.github.com/hvojdani/air-team/air-team-ui:0.61.0        
+        image: docker.pkg.github.com/hvojdani/air-team/air-team-ui:0.62.0        
         resources:
           limits:
             memory: "64Mi"
+            cpu: "1"
         ports:
         - containerPort: 80
       imagePullSecrets:

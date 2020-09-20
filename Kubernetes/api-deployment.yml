@@ -27,6 +27,7 @@ spec:
         resources:
           limits:
             memory: "150Mi"
+            cpu: "1.5"
         ports:
         - containerPort: 80
       imagePullSecrets:
