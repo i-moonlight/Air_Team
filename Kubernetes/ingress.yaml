@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: my-ingress
@@ -7,12 +7,20 @@ spec:
   - host: api.airimagefind.com
     http:
       paths:
-      - backend:
-          serviceName: apibackend
-          servicePort: 80
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: apibackend
+            port:
+              number: 80
   - host: airimagefind.com
     http:
       paths:
-      - backend:
-          serviceName: uiapp
-          servicePort: 80
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: uiapp
+            port: 
+              number: 80
