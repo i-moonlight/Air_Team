@@ -5,10 +5,10 @@
       <button (click)="Find(search.value)">Search</button>
     </div>
   </div>
-  <div class="result-desc">result for: {{keyword}}</div>
-  <div class="result-notfound" *ngIf="Images && Images.length == 0">not result found</div>
+  <div class="result-desc">last search was for: {{keyword}}</div>
+  <div class="result-notfound" *ngIf="noResultFound">not result found</div>
   <div *ngIf="isLoading" class="loading">
-    <img src="../assets/loading.gif"/>
+    <img src="../assets/loading.gif"/>loading
   </div>
   <div class="result-grid">
     <div *ngFor="let item of Images" class="thumb">

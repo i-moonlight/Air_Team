@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   Images: ImageDto[];
   keyword: string;
   isLoading = false;
+  noResultFound = false;
   @ViewChild('search') searchInput: ElementRef;
 
   constructor(private changeRef: ChangeDetectorRef, private httpclient: HttpClient, private route: ActivatedRoute, private router: Router) {
@@ -30,10 +31,10 @@ export class AppComponent implements OnInit {
 
     this.route.queryParams.subscribe(params => {
       const value = params.keyword;
-      if(!value) {
+      if (!value) {
         return;
       }
-      
+
       this.ClearResults();
       const isValid = this.IsValidKeyword(value);
       if (!isValid) {
@@ -71,16 +72,20 @@ export class AppComponent implements OnInit {
 
   SearchApi(value: string) {
     this.isLoading = true;
+    this.noResultFound = false;
+    this.changeRef.detectChanges();
+
     this.httpclient.get<ImageDto[]>(this.searchUrl + '?keyword=' + value)
       .subscribe(data => {
         this.Images = data;
         localStorage.setItem('keyword', this.keyword);
         localStorage.setItem('lastdata', JSON.stringify(this.Images));
-        
-        this.changeRef.detectChanges();
-        
+        if (!this.Images || this.Images.length == 0) {
+          this.noResultFound = true;
+        }
       }, error => {
         this.Images = [];
+        this.noResultFound = true;
       }, () => {
         this.isLoading = false;
         this.changeRef.detectChanges();
