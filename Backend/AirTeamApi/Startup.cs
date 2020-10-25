@@ -25,6 +25,8 @@ namespace AirTeamApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAirTeamOptions(Configuration);
+
             services.AddControllers();
 
             services.AddCors(c => c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()));

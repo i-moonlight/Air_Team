@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtension
     {
-        public static void AddOptions(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAirTeamOptions(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions();
             services.Configure<AirTeamSetting>(configuration.GetSection("AirTeamSetting"));
