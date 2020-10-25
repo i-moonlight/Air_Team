@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: at-ui-instance
-        image: docker.pkg.github.com/hvojdani/air-team/air-team-ui:0.62.0        
+        image: docker.pkg.github.com/hvojdani/air-team/air-team-ui:0.63.0        
         resources:
           limits:
             memory: "64Mi"
