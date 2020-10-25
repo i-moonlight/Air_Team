@@ -6,7 +6,7 @@ then practice deployment with ditributed caching, logging and monitoring capabil
 
 client app written in angular and server project by asp.net core.
 
-tech, libs and product used:
+tech, libs and products used:
 
 - Serilog
 - Seq Logging
