@@ -38,11 +38,11 @@ namespace AirTeamApi
             services.AddAirTeamHttpClient(Configuration);
 
             services.AddAppLogging(Configuration, WebHostEnvironment);
-            
+
             services.AddHealthChecks()
                 .AddRedis(Configuration.GetConnectionString("Redis"))
                 .AddCheck<UriHealthCheck>("airteamimages.com_site");
-            
+
             services.AddSingleton(Configuration);
 
             services.AddTransient<IAirTeamService, AirTeamService>();

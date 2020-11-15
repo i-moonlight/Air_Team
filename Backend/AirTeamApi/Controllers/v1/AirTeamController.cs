@@ -16,8 +16,8 @@ namespace AirTeamApi.Controllers.v1
     [EnableCors("AllowOrigin")]
     public class AirTeamController : ControllerBase
     {
-        private IAirTeamService AirTeamService;
-        private ILogger<AirTeamController> Logger;
+        private readonly IAirTeamService AirTeamService;
+        private readonly ILogger<AirTeamController> Logger;
         public AirTeamController(IAirTeamService airTeamService, ILogger<AirTeamController> logging)
         {
             AirTeamService = airTeamService;
@@ -49,7 +49,7 @@ namespace AirTeamApi.Controllers.v1
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IEnumerable<ImageDto>> Search([MinLength(3), MaxLength(14), Required(AllowEmptyStrings = false), FromQuery]string keyword)
+        public async Task<IEnumerable<ImageDto>> Search([MinLength(3), MaxLength(14), Required(AllowEmptyStrings = false), FromQuery] string keyword)
         {
             if (keyword == null)
                 throw new ArgumentNullException(keyword);

@@ -75,20 +75,27 @@ namespace AirTeamApi.Services.Impl
 
         private IEnumerable<ImageDto> ExtractDataFromHtml(IEnumerable<HtmlNode> htmlNodes)
         {
-            return htmlNodes.Select(node => getImageFromNode(node));
+            return htmlNodes.Select(node => GetImageFromNode(node));
         }
 
-        private ImageDto getImageFromNode(HtmlNode node)
+        private ImageDto GetImageFromNode(HtmlNode node)
         {
-            var image = new ImageDto();
-            image.ImageId = node.QuerySelector(".id").InnerText.Replace("Image ID:", "", StringComparison.InvariantCultureIgnoreCase).Trim();
+            var image = new ImageDto
+            {
+                ImageId = node.QuerySelector(".id").InnerText.Replace("Image ID:", "", StringComparison.InvariantCultureIgnoreCase).Trim()
+            };
+
+            if (_AirTeamHttpClient.BaseUrl == null)
+            {
+                throw new NullReferenceException(nameof(_AirTeamHttpClient.BaseUrl));
+            }
 
             var imageNode = node.QuerySelector("img");
             image.Description = HttpUtility.HtmlDecode(imageNode.Attributes["alt"].Value);
-            image.BaseImageUrl = Combine(_AirTeamHttpClient.BaseUrl?.ToString(), imageNode.Attributes["src"].Value);
+            image.BaseImageUrl = Combine(_AirTeamHttpClient.BaseUrl.ToString(), imageNode.Attributes["src"].Value);
 
             image.Title = HttpUtility.HtmlDecode(node.QuerySelector("div:last-child").InnerHtml);
-            image.DetailUrl = Combine(_AirTeamHttpClient.BaseUrl?.ToString(), node.QuerySelector("a").Attributes["href"].Value);
+            image.DetailUrl = Combine(_AirTeamHttpClient.BaseUrl.ToString(), node.QuerySelector("a").Attributes["href"].Value);
 
             return image;
         }

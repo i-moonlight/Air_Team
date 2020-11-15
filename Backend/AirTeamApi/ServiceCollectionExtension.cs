@@ -15,6 +15,11 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void AddAirTeamOptions(this IServiceCollection services, IConfiguration configuration)
         {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
             services.AddOptions();
             services.Configure<AirTeamSetting>(configuration.GetSection("AirTeamSetting"));
         }

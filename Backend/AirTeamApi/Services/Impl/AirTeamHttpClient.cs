@@ -9,7 +9,7 @@ namespace AirTeamApi.Services.Impl
     public class AirTeamHttpClient : IAirTeamHttpClient
     {
         private readonly HttpClient _HttpClient;
-        public Uri BaseUrl => _HttpClient.BaseAddress;
+        public Uri? BaseUrl => _HttpClient?.BaseAddress;
 
         public AirTeamHttpClient(HttpClient httpClient)
         {
@@ -20,7 +20,7 @@ namespace AirTeamApi.Services.Impl
         {
             using var httpResponseMessage = await _HttpClient.GetAsync($"search.php?srch_keyword={keyword}", HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             httpResponseMessage.EnsureSuccessStatusCode();
-            var responseHtmlBody = await httpResponseMessage.Content.ReadAsStringAsync();
+            var responseHtmlBody = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
 
             return responseHtmlBody;
         }
