@@ -27,6 +27,8 @@ namespace AirTeamApi.Tests.UnitTest
             var MockedIOptions = new Moq.Mock<IOptions<AirTeamSetting>>();
             var mock = new Mock<ILogger<Controllers.v1.AirTeamController>>();
 
+            MockedClient.SetupGet(o => o.BaseUrl).Returns(new Uri("http://test.com"));
+
             MockedIOptions.SetupGet(o => o.Value).Returns(new AirTeamSetting { CacheExprationMinutes = 15 });
 
             var actualService = new AirTeamService(MockedCache.Object, MockedClient.Object, htmlParseService, MockedIOptions.Object);
