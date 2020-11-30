@@ -13,7 +13,7 @@
   <div class="result-grid">
     <div *ngFor="let item of Images" class="thumb">
       <div>
-        <a href="{{item.detailUrl}}" target="_blank">
+        <a href="{{item.detailUrl}}" target="_blank" rel="noopener noreferrer">
           <img class="image" [src]="item.baseImageUrl" alt="loading" title="{{item.description}}">
         </a>
       </div>
