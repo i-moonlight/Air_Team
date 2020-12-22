@@ -5,11 +5,6 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" 
-    directory: "/UI" 
-    schedule:
-      interval: "weekly"
-  
   - package-ecosystem: "nuget" 
     directory: "/Backend/AirTeamApi" 
     schedule:
@@ -19,3 +14,8 @@ updates:
     directory: "/Backend/AirTeamApi.Tests" 
     schedule:
       interval: "weekly"
+#  - package-ecosystem: "npm" 
+#    directory: "/UI" 
+#    schedule:
+#      interval: "weekly"
+  
