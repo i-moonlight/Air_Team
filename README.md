@@ -10,9 +10,9 @@ tech, libs and products used:
 
 - Serilog
 - Seq Logging
-- Kubernete
+- Kubernetes
 - Redis
-- Promotheos
+- Promotheus
 - Grafana
 - Kube Metric Server
 
