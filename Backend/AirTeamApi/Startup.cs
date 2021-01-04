@@ -45,8 +45,8 @@ namespace AirTeamApi
 
             services.AddSingleton(Configuration);
 
-            services.AddTransient<IAirTeamService, AirTeamService>();
-            services.AddTransient<IHtmlParseService, HtmlParseService>();
+            services.AddScoped<IAirTeamService, AirTeamService>();
+            services.AddScoped<IHtmlParseService, HtmlParseService>();
 
         }
 
