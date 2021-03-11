@@ -40,8 +40,9 @@ namespace AirTeamApi.Services.Impl
 
             MetricsDefinition.ApiCallTotal.WithLabels(Environment.MachineName).Inc();
 
-            var searchString = keyword.Trim().ToLower().Replace(" ", "", StringComparison.InvariantCultureIgnoreCase);
-            var htmlResponse = await _Cache.GetStringAsync(searchString);
+            var searchString = keyword.Trim();
+            string cacheString = GetCacheKey(searchString);
+            var htmlResponse = await _Cache.GetStringAsync(cacheString);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
@@ -59,17 +60,23 @@ namespace AirTeamApi.Services.Impl
             return images;
         }
 
+        private static string GetCacheKey(string searchString)
+        {
+            return searchString.Replace(" ", "").ToLower();
+        }
+
         private async Task<string> GetFromAirTeamImages(string searchString)
         {
 
-            using CancellationTokenSource httpTokenSource = new CancellationTokenSource(20000);
+            using CancellationTokenSource httpTokenSource = new(20000);
             var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString, httpTokenSource.Token);
 
             var resultDivision = _HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
             var resultHtml = resultDivision.WriteTo();
 
             var cacheEntryOption = new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
-            await _Cache.SetStringAsync(searchString, resultHtml, cacheEntryOption);
+            var cacheKey = GetCacheKey(searchString);
+            await _Cache.SetStringAsync(cacheKey, resultHtml, cacheEntryOption);
             return resultHtml;
         }
 
@@ -100,7 +107,7 @@ namespace AirTeamApi.Services.Impl
             return image;
         }
 
-        private string Combine(string? uri1, string? uri2)
+        private static string Combine(string? uri1, string? uri2)
         {
             uri1 = uri1?.TrimEnd('/');
             uri2 = uri2?.TrimStart('/');
