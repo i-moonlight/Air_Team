@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: seq-instance
-        image: datalust/seq:2020.1
+        image: datalust/seq:2021.2
         resources:
           limits:
             memory: "150Mi"
