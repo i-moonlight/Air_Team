@@ -20,8 +20,8 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.100
+        dotnet-version: 5.0.x
     - name: Build with dotnet
-      run: dotnet build ./Backend/AirTeamApi/AirTeamApi.csproj --configuration Release
+      run: dotnet build ./Backend/AirTeam.sln -v m
     - name: Test with dotnet
-      run: dotnet test ./Backend/AirTeamApi.Tests/AirTeamApi.Tests.csproj
+      run: dotnet test ./Backend/AirTeamApi.Tests/AirTeamApi.Tests.csproj --no-build
