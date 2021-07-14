@@ -2,9 +2,6 @@ name: ui-docker
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
-    branches:
-      - master
     # Publish `v1.2.3` tags as releases.
     tags:
       - v*
@@ -34,7 +31,7 @@ jobs:
           IMAGE_ID=ghcr.io/hvojdani/$IMAGE_NAME
 
           # Strip git ref prefix from version
-          VERSION=$(cat ./version/UI.txt)
+          VERSION=${{ github.ref }}
 
           # Strip "v" prefix from tag name
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
