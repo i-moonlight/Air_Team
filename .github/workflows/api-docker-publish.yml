@@ -34,7 +34,7 @@ jobs:
           IMAGE_ID=ghcr.io/hvojdani/$IMAGE_NAME
 
           # Strip git ref prefix from version
-          VERSION=$(cat ./version/Backend.txt)
+          VERSION=${{ github.ref }}
 
           # Strip "v" prefix from tag name
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
