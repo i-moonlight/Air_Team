@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: at-api-instance
-        image: ghcr.io/hvojdani/air-team-api:0.49.0
+        image: ghcr.io/hvojdani/air-team-api:3.2
         resources:
           limits:
             memory: "150Mi"
