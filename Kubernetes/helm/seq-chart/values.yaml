@@ -1,0 +1,7 @@
+serviceName: seq
+image: 
+  containerName: seq-instance
+  repo: datalust/seq
+  tag: 2021.2
+labels: 
+  app: seq

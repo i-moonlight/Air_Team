@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ui-deployment
+  name: {{ .Chart.Name }}-deployment
 spec:
   replicas: 2
   strategy:
@@ -11,15 +11,15 @@ spec:
       maxUnavailable: 1
   selector:
     matchLabels:
-      app: air-team-ui
+      {{- include "labeltemplate" .Values.labels | indent 6 }}
   template:
     metadata:
       labels:
-        app: air-team-ui
+        {{- include "labeltemplate" .Values.labels | indent 8 }}
     spec:
       containers:
-      - name: at-ui-instance
-        image: ghcr.io/hvojdani/air-team-ui:3.2
+      - name: {{ .Values.image.containerName }}
+        image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
         resources:
           limits:
             memory: "64Mi"
@@ -27,4 +27,4 @@ spec:
         ports:
         - containerPort: 80
       imagePullSecrets:
-        - name: regcred
+        - name: {{ .Values.image.secret }}

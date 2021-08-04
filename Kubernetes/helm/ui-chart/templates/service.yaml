@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: apibackend
-spec:
+  name: {{ .Values.serviceName }}
+spec:  
   selector:
-    app: air-team-api
+    {{- include "labeltemplate" .Values.labels | indent 4 }}
   ports:
     - port: 80
       targetPort: 80

@@ -1,0 +1,7 @@
+serviceName: redis
+image: 
+  containerName: redis-instance
+  repo: redis
+  tag: alpine
+labels: 
+  app: redis

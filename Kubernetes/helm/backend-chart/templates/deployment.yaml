@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-deployment
+  name: {{ .Chart.Name }}-deployment
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/path: '/metrics'
@@ -15,15 +15,15 @@ spec:
       maxUnavailable: 1
   selector:
     matchLabels:
-      app: air-team-api
+      {{- include "labeltemplate" .Values.labels | indent 6 }}
   template:
     metadata:
       labels:
-        app: air-team-api
+        {{- include "labeltemplate" .Values.labels | indent 8 }}
     spec:
       containers:
-      - name: at-api-instance
-        image: ghcr.io/hvojdani/air-team-api:3.2
+      - name: {{ .Values.image.containerName }}
+        image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
         resources:
           limits:
             memory: "150Mi"
@@ -31,4 +31,4 @@ spec:
         ports:
         - containerPort: 80
       imagePullSecrets:
-        - name: regcred
+        - name: {{ .Values.image.secret }}

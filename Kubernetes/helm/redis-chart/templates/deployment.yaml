@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-cache
+  name: {{ .Chart.Name }}-deployment
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: redis
+      {{- include "labeltemplate" .Values.labels | indent 6 }}
   template:
     metadata:
       labels:
-        app: redis
+        {{- include "labeltemplate" .Values.labels | indent 8 }}
     spec:
       containers:
-      - name: redis-instance
-        image: redis:alpine
+      - name: {{ .Values.image.containerName }}
+        image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
         resources:
           limits:
             memory: "100Mi"

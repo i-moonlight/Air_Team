@@ -1,0 +1,9 @@
+serviceName: apibackend
+host: api.airimagefind.com
+image: 
+  containerName: api-instance
+  repo: ghcr.io/hvojdani/air-team-api
+  tag: ver
+  secret: regcred
+labels: 
+  app: apibackend

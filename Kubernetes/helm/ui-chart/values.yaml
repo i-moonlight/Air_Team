@@ -1,0 +1,9 @@
+serviceName: uiapp
+host: airimagefind.com
+image: 
+  containerName: ui-instance
+  repo: ghcr.io/hvojdani/air-team-ui
+  tag: ver
+  secret: regcred
+labels: 
+  app: uiapp

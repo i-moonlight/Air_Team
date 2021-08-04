@@ -1,24 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: seq-deploy
+  name: {{ .Chart.Name }}-deployment
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: seq
-  strategy:
-    type: Recreate
+      {{- include "labeltemplate" .Values.labels | indent 6 }}
   template:
     metadata:
       labels:
-        app: seq
+        {{- include "labeltemplate" .Values.labels | indent 8 }}
     spec:
       containers:
-      - name: seq-instance
-        image: datalust/seq:2021.2
+      - name: {{ .Values.image.containerName }}
+        image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
         resources:
           limits:
             memory: "150Mi"
