@@ -9,6 +9,7 @@ client app written in angular and server project by asp.net core.
 tech, libs and products used:
 
 - Kubernetes
+- helm
 - Serilog
 - Seq Logging
 - Redis
