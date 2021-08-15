@@ -17,4 +17,4 @@ tech, libs and products used:
 - Grafana
 - Kube Metric Server
 
-I used my laptop for running project on windows 10 docker desktop edge(wsl2 engine).
+I used my laptop for running project on windows 10 docker desktop wsl 2 engine
