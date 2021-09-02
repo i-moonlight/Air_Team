@@ -1,4 +1,7 @@
-﻿[*.cs]
+﻿indent_style = space
+indent_size = 4
+
+[*.cs]
 
 # CA1304: Specify CultureInfo
 dotnet_diagnostic.CA1304.severity = none

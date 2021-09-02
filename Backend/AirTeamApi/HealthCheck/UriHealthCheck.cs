@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AirTeamApi.Services.Contract;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Net.Http;
@@ -9,25 +10,26 @@ namespace AirTeamApi.HealthCheck
 {
     public class UriHealthCheck : IHealthCheck
     {
-        private readonly IConfiguration _Configuration;
-        public UriHealthCheck(IConfiguration configuration)
+        private readonly IAirTeamHttpClient _airTeamHttpClient;
+        public UriHealthCheck(IAirTeamHttpClient airTeamHttpClient)
         {
-            _Configuration = configuration;
+            _airTeamHttpClient = airTeamHttpClient;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            using var httpClient = new HttpClient()
+            try
             {
-                Timeout = TimeSpan.FromSeconds(5),
-                BaseAddress = new Uri(_Configuration.GetValue<string>("BaseUrl"))
-            };
+                using var httpResponseMessage = await _airTeamHttpClient.HttpClient.GetAsync("/", cancellationToken);
 
-            using var httpResponseMessage = await httpClient.GetAsync("/", cancellationToken);
-
-            if (httpResponseMessage.IsSuccessStatusCode)
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    return HealthCheckResult.Healthy("A healthy result.");
+                }
+            }
+            catch
             {
-                return HealthCheckResult.Healthy("A healthy result.");
+                return HealthCheckResult.Unhealthy("An unhealthy result.");
             }
 
             return HealthCheckResult.Unhealthy("An unhealthy result.");

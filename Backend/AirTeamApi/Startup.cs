@@ -2,13 +2,20 @@ using AirTeamApi.HealthCheck;
 using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Impl;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Prometheus;
 using System;
+using System.IO;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace AirTeamApi
 {
@@ -29,7 +36,8 @@ namespace AirTeamApi
 
             services.AddControllers();
 
-            services.AddCors(c => c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()));
+            services.AddCors(c => c.AddDefaultPolicy(options =>
+                options.AllowAnyOrigin().AllowAnyHeader().DisallowCredentials()));
 
             services.AddCacheSupport(Configuration, WebHostEnvironment);
 
@@ -60,13 +68,9 @@ namespace AirTeamApi
             //app.UseHttpsRedirection();
             Metrics.SuppressDefaultMetrics();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api doc v1"));
-
+            app.UseCors();
             app.UseRouting();
             //app.UseAuthorization();
-            app.UseCors(options => options.AllowAnyOrigin());
-
 
             app.Use((context, next) =>
             {
@@ -77,11 +81,58 @@ namespace AirTeamApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
                 endpoints.MapMetrics("/metrics");
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    ResponseWriter = WriteResponse
+                });
             });
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api doc v1"));
 
+        }
+
+        private static Task WriteResponse(HttpContext context, HealthReport result)
+        {
+            context.Response.ContentType = "application/json; charset=utf-8";
+
+            var options = new JsonWriterOptions
+            {
+                Indented = true
+            };
+
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new Utf8JsonWriter(stream, options))
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("status", result.Status.ToString());
+                    writer.WriteStartObject("results");
+                    foreach (var entry in result.Entries)
+                    {
+                        writer.WriteStartObject(entry.Key);
+                        writer.WriteString("status", entry.Value.Status.ToString());
+                        writer.WriteString("description", entry.Value.Description);
+                        writer.WriteStartObject("data");
+                        foreach (var item in entry.Value.Data)
+                        {
+                            writer.WritePropertyName(item.Key);
+                            JsonSerializer.Serialize(
+                                writer, item.Value, item.Value?.GetType() ??
+                                typeof(object));
+                        }
+                        writer.WriteEndObject();
+                        writer.WriteEndObject();
+                    }
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                }
+
+                var json = Encoding.UTF8.GetString(stream.ToArray());
+
+                return context.Response.WriteAsync(json);
+            }
         }
 
     }

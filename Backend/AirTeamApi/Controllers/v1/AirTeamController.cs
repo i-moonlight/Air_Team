@@ -1,6 +1,5 @@
 ﻿using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,6 @@ namespace AirTeamApi.Controllers.v1
 {
     [ApiController]
     [Route("v1/[controller]")]
-    [EnableCors("AllowOrigin")]
     public class AirTeamController : ControllerBase
     {
         private readonly IAirTeamService AirTeamService;
@@ -29,7 +27,7 @@ namespace AirTeamApi.Controllers.v1
         /// </summary>
         /// <param name="Message">simple text to log as error message</param>
         /// <returns></returns>
-        [HttpGet, Route("testlog")]
+        [HttpGet("testlog")]
         public void TestLog([Required(AllowEmptyStrings = false), MaxLength(100)] string message)
         {
             Logger.LogWarning(message);
@@ -45,7 +43,7 @@ namespace AirTeamApi.Controllers.v1
         /// <returns>json array of search results</returns>
         /// <response code="200">if every thing goes well</response>
         /// <response code="400">If keyword not supplied and has length less than 3</response>     
-        [HttpGet, Route("Search")]
+        [HttpGet("Search")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
