@@ -5,10 +5,10 @@
 
 version: 2
 updates:
-  - package-ecosystem: "nuget" 
-    directory: "/Backend/AirTeamApi" 
-    schedule:
-      interval: "weekly"
+#  - package-ecosystem: "nuget" 
+#    directory: "/Backend/AirTeamApi" 
+#    schedule:
+#      interval: "weekly"
 
   - package-ecosystem: "nuget" 
     directory: "/Backend/AirTeamApi.Tests" 
