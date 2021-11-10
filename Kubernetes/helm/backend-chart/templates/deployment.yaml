@@ -23,11 +23,14 @@ spec:
     spec:
       containers:
       - name: {{ .Values.image.containerName }}
-        image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
+        image: {{ .Values.image.repo }}:{{ .Values.image.tag }}        
+        env:
+        - name: ASPNETCORE_ENVIRONMENT 
+          value: Production
         resources:
           limits:
             memory: "150Mi"
-            cpu: "1500m"
+            cpu: "1500m"                  
         ports:
         - containerPort: 80
       imagePullSecrets:
