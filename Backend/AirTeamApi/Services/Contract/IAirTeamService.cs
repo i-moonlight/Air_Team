@@ -1,6 +1,4 @@
 ﻿using AirTeamApi.Services.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AirTeamApi.Services.Contract
 {

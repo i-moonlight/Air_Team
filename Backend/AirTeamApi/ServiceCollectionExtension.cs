@@ -3,13 +3,13 @@ using AirTeamApi.Services.Impl;
 using AirTeamApi.Settings;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using System;
 using System.Net.Http;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace AirTeamApi
 {
     public static class ServiceCollectionExtension
     {

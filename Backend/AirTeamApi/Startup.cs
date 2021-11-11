@@ -1,3 +1,9 @@
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Threading;
+global using System.Threading.Tasks;
+
 using AirTeamApi.HealthCheck;
 using AirTeamApi.Services.Contract;
 using AirTeamApi.Services.Impl;
@@ -11,11 +17,9 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Prometheus;
-using System;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace AirTeamApi
 {

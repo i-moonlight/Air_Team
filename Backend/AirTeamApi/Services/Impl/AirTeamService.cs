@@ -6,11 +6,6 @@ using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace AirTeamApi.Services.Impl
@@ -31,6 +26,12 @@ namespace AirTeamApi.Services.Impl
             _HtmlParserService = htmlParserService;
             _Cache = cache;
             _AirTeamSetting = airTeamSetting.Value;
+
+            if (_AirTeamHttpClient.BaseUrl == null)
+            {
+                throw new ArgumentException(nameof(_AirTeamHttpClient.BaseUrl));
+            }
+
         }
 
         public async Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword)
@@ -55,7 +56,7 @@ namespace AirTeamApi.Services.Impl
             }
 
             var imageHtmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
-            IEnumerable<ImageDto> images = ExtractDataFromHtml(imageHtmlNodes);
+            IEnumerable<ImageDto> images = imageHtmlNodes.Select(node => GetImageFromNode(node, _AirTeamHttpClient.BaseUrl.ToString()));
 
             return images;
         }
@@ -67,7 +68,6 @@ namespace AirTeamApi.Services.Impl
 
         private async Task<string> GetFromAirTeamImages(string searchString)
         {
-
             using CancellationTokenSource httpTokenSource = new(20000);
             var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString, httpTokenSource.Token);
 
@@ -80,29 +80,19 @@ namespace AirTeamApi.Services.Impl
             return resultHtml;
         }
 
-        private IEnumerable<ImageDto> ExtractDataFromHtml(IEnumerable<HtmlNode> htmlNodes)
-        {
-            return htmlNodes.Select(node => GetImageFromNode(node));
-        }
-
-        private ImageDto GetImageFromNode(HtmlNode node)
+        private static ImageDto GetImageFromNode(HtmlNode node, string baseUrl)
         {
             var image = new ImageDto
             {
                 ImageId = node.QuerySelector(".id").InnerText.Replace("Image ID:", "", StringComparison.InvariantCultureIgnoreCase).Trim()
             };
 
-            if (_AirTeamHttpClient.BaseUrl == null)
-            {
-                throw new NullReferenceException(nameof(_AirTeamHttpClient.BaseUrl));
-            }
-
             var imageNode = node.QuerySelector("img");
             image.Description = HttpUtility.HtmlDecode(imageNode.Attributes["alt"].Value);
-            image.BaseImageUrl = Combine(_AirTeamHttpClient.BaseUrl.ToString(), imageNode.Attributes["src"].Value);
+            image.BaseImageUrl = Combine(baseUrl, imageNode.Attributes["src"].Value);
 
             image.Title = HttpUtility.HtmlDecode(node.QuerySelector("div:last-child").InnerHtml);
-            image.DetailUrl = Combine(_AirTeamHttpClient.BaseUrl.ToString(), node.QuerySelector("a").Attributes["href"].Value);
+            image.DetailUrl = Combine(baseUrl, node.QuerySelector("a").Attributes["href"].Value);
 
             return image;
         }

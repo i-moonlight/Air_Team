@@ -1,7 +1,6 @@
 ﻿using AirTeamApi.Services.Contract;
 using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
-using System.Collections.Generic;
 
 namespace AirTeamApi.Services.Impl
 {

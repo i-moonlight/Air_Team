@@ -1,6 +1,6 @@
 ﻿namespace AirTeamApi.Services.Models
 {
-    public class ImageDto
+    public sealed class ImageDto
     {
         public string ImageId { get; set; } = default!;
         public string Title { get; set; } = default!;

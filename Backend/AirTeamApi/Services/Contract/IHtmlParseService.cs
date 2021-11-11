@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using System.Collections.Generic;
 
 namespace AirTeamApi.Services.Contract
 {
