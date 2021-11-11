@@ -23,3 +23,7 @@ dotnet_diagnostic.CS1998.severity = error
 
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
+csharp_prefer_static_local_function=true:warning
+
+[*.{cs,vb}]
+dotnet_diagnostic.CA1052.severity=error

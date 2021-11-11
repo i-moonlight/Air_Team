@@ -27,7 +27,7 @@ namespace AirTeamApi.Services.Impl
             _Cache = cache;
             _AirTeamSetting = airTeamSetting.Value;
 
-            if (_AirTeamHttpClient.BaseUrl == null)
+            if (_AirTeamHttpClient.BaseUrl is null)
             {
                 throw new ArgumentException(nameof(_AirTeamHttpClient.BaseUrl));
             }
@@ -56,7 +56,7 @@ namespace AirTeamApi.Services.Impl
             }
 
             var imageHtmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
-            IEnumerable<ImageDto> images = imageHtmlNodes.Select(node => GetImageFromNode(node, _AirTeamHttpClient.BaseUrl.ToString()));
+            IEnumerable<ImageDto> images = imageHtmlNodes.Select(node => GetImageFromNode(node, _AirTeamHttpClient.BaseUrl));
 
             return images;
         }
@@ -80,19 +80,24 @@ namespace AirTeamApi.Services.Impl
             return resultHtml;
         }
 
-        private static ImageDto GetImageFromNode(HtmlNode node, string baseUrl)
+        private static ImageDto GetImageFromNode(HtmlNode node, Uri? baseUrl)
         {
             var image = new ImageDto
             {
                 ImageId = node.QuerySelector(".id").InnerText.Replace("Image ID:", "", StringComparison.InvariantCultureIgnoreCase).Trim()
             };
 
+            if (baseUrl is null)
+            {
+                return image;
+            }
+
             var imageNode = node.QuerySelector("img");
             image.Description = HttpUtility.HtmlDecode(imageNode.Attributes["alt"].Value);
-            image.BaseImageUrl = Combine(baseUrl, imageNode.Attributes["src"].Value);
+            image.BaseImageUrl = Combine(baseUrl.ToString(), imageNode.Attributes["src"].Value);
 
             image.Title = HttpUtility.HtmlDecode(node.QuerySelector("div:last-child").InnerHtml);
-            image.DetailUrl = Combine(baseUrl, node.QuerySelector("a").Attributes["href"].Value);
+            image.DetailUrl = Combine(baseUrl.ToString(), node.QuerySelector("a").Attributes["href"].Value);
 
             return image;
         }
