@@ -12,6 +12,5 @@ FROM nginx:alpine
 COPY --from=build /app/dist/AirTeamUI /usr/share/nginx/html
 
 WORKDIR /etc/nginx/conf.d
-RUN echo 'server { location / { try_files $uri /index.html; } }' > spa.conf
+RUN cat default.conf | grep -n index | head -n 1 | awk -F'[:]' '{print $1}' | xargs -I {} sed -i '{} i try_files $uri /index.html;' default.conf
 WORKDIR /
-
