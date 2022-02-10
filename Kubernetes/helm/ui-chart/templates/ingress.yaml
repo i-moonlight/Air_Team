@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: {{ .Chart.Name }}-ingress
 spec:
+  ingressClassName: nginx
   rules:
   - host: {{ .Values.host }}
     http:
