@@ -55,11 +55,11 @@ describe('AppComponent', () => {
     ];
 
     const keyword = 'f14';
-    
-    await app.SearchApi(keyword);
-    
+        
     const req = httpMock.expectOne(`${app.searchUrl}?keyword=${keyword}`);
     req.flush(dummyImages);
+
+    await app.SearchApi(keyword);    
 
     expect(req.request.method).toBe('GET');
     expect(app.Images).toEqual(dummyImages);
