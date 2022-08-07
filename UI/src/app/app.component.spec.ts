@@ -44,7 +44,7 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('button').textContent).toContain('Search');
   });
 
-  it('should successfull search', () => {
+  it('should successfull search', async () => {
     const compiled = fixture.nativeElement;
     const app = fixture.componentInstance;
 
@@ -56,16 +56,16 @@ describe('AppComponent', () => {
 
     const keyword = 'f14';
 
-    var p = app.SearchApi(keyword);
+    var prom = app.SearchApi(keyword);
 
     const req = httpMock.expectOne(`${app.searchUrl}?keyword=${keyword}`);
     req.flush(dummyImages);
 
-    p.then(() => {
-      expect(req.request.method).toBe('GET');
-      expect(app.Images).toEqual(dummyImages);
-      expect(compiled.querySelectorAll('.image').length).toBe(dummyImages.length);
-    });
+    await prom;
+    expect(req.request.method).toBe('GET');
+    expect(app.Images).toEqual(dummyImages);
+    expect(compiled.querySelectorAll('.image').length).toBe(dummyImages.length);
+
   });
 
   it('should prevent search', () => {
