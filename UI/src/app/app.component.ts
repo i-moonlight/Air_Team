@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
     this.keyword = localStorage.getItem('keyword');
     this.Images = JSON.parse(localStorage.getItem('lastdata'));
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       const value = params.keyword;
       if (!value) {
         return;
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
       }
       this.keyword = value;
       this.searchInput.nativeElement.value = value;
-      this.SearchApi(value);
+      await this.SearchApi(value);
     });
   }
 
@@ -70,26 +70,28 @@ export class AppComponent implements OnInit {
     return this.BaseURL + 'v1/AirTeam/Search';
   }
 
-  SearchApi(value: string) {
+  async SearchApi(value: string) {
     this.isLoading = true;
     this.noResultFound = false;
     this.changeRef.detectChanges();
 
-    this.httpclient.get<ImageDto[]>(this.searchUrl + '?keyword=' + value)
-      .subscribe(data => {
-        this.Images = data;
-        localStorage.setItem('keyword', this.keyword);
-        localStorage.setItem('lastdata', JSON.stringify(this.Images));
-        if (!this.Images || this.Images.length == 0) {
-          this.noResultFound = true;
-        }
-      }, error => {
-        this.Images = [];
+    try {
+
+      this.Images = await this.httpclient.get<ImageDto[]>(this.searchUrl + '?keyword=' + value).toPromise();      
+      localStorage.setItem('keyword', this.keyword);
+      localStorage.setItem('lastdata', JSON.stringify(this.Images));
+      if (!this.Images || this.Images.length == 0) {
         this.noResultFound = true;
-      }, () => {
-        this.isLoading = false;
-        this.changeRef.detectChanges();
-      });
+      }
+    }
+    catch {
+      this.Images = [];
+      this.noResultFound = true;
+    }
+    finally {
+      this.isLoading = false;
+      this.changeRef.detectChanges();
+    }
   }
 
   onKeyUp(event: KeyboardEvent) {

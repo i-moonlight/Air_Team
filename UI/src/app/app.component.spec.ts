@@ -44,7 +44,7 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('button').textContent).toContain('Search');
   });
 
-  it('should successfull search', () => {
+  it('should successfull search', async () => {
     const compiled = fixture.nativeElement;
     const app = fixture.componentInstance;
 
@@ -56,7 +56,7 @@ describe('AppComponent', () => {
 
     const keyword = 'f14';
     
-    app.SearchApi(keyword);
+    await app.SearchApi(keyword);
     
     const req = httpMock.expectOne(`${app.searchUrl}?keyword=${keyword}`);
     req.flush(dummyImages);
