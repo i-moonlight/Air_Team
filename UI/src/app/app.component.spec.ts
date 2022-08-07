@@ -9,7 +9,7 @@ describe('AppComponent', () => {
   let httpMock: HttpTestingController;
   let fixture: ComponentFixture<AppComponent>;
   beforeEach(waitForAsync(() => {
-    
+
     TestBed.configureTestingModule({
       declarations: [
         AppComponent
@@ -55,16 +55,17 @@ describe('AppComponent', () => {
     ];
 
     const keyword = 'f14';
-        
-    app.SearchApi(keyword);    
-    
+
+    var p = app.SearchApi(keyword);
+
     const req = httpMock.expectOne(`${app.searchUrl}?keyword=${keyword}`);
     req.flush(dummyImages);
 
-    expect(req.request.method).toBe('GET');
-    expect(app.Images).toEqual(dummyImages);
-    expect(compiled.querySelectorAll('.image').length).toBe(dummyImages.length);
-
+    p.then(() => {
+      expect(req.request.method).toBe('GET');
+      expect(app.Images).toEqual(dummyImages);
+      expect(compiled.querySelectorAll('.image').length).toBe(dummyImages.length);
+    });
   });
 
   it('should prevent search', () => {
