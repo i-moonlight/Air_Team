@@ -42,7 +42,7 @@ namespace AirTeamApi
 
         public static void AddAirTeamHttpClient(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHttpClient<IAirTeamHttpClient, AirTeamHttpClient>("AirTeamClient", httpClient =>
+            services.AddHttpClient<IAirTeamClient, AirTeamClient>("AirTeamClient", httpClient =>
             {
                 httpClient.BaseAddress = new Uri(configuration.GetValue<string>("BaseUrl"));
             }).ConfigurePrimaryHttpMessageHandler(() =>

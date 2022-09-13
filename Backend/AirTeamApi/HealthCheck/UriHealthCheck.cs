@@ -5,30 +5,20 @@ namespace AirTeamApi.HealthCheck
 {
     public class UriHealthCheck : IHealthCheck
     {
-        private readonly IAirTeamHttpClient _airTeamHttpClient;
-        public UriHealthCheck(IAirTeamHttpClient airTeamHttpClient)
+        private readonly IAirTeamClient _airTeamHttpClient;
+        public UriHealthCheck(IAirTeamClient airTeamHttpClient)
         {
             _airTeamHttpClient = airTeamHttpClient;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            try
+            if (await _airTeamHttpClient.IsConnected())
             {
-                using var httpResponseMessage = await _airTeamHttpClient.HttpClient.GetAsync("/", cancellationToken);
-
-                if (httpResponseMessage.IsSuccessStatusCode)
-                {
-                    return HealthCheckResult.Healthy("A healthy result.");
-                }
-            }
-            catch
-            {
-                return HealthCheckResult.Unhealthy("An unhealthy result.");
+                return HealthCheckResult.Healthy("A healthy result.");
             }
 
             return HealthCheckResult.Unhealthy("An unhealthy result.");
-
         }
     }
 }
