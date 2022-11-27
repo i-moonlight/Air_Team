@@ -42,9 +42,16 @@ namespace AirTeamApi
 
         public static void AddAirTeamHttpClient(this IServiceCollection services, IConfiguration configuration)
         {
+            var baseUrl = configuration.GetValue<string>("BaseUrl");
+            if (baseUrl is null)
+            {
+                Console.Error.WriteLine("invalid baseUrl Connection string");
+                throw new ArgumentNullException("baseUrl connection string");
+            }
+
             services.AddHttpClient<IAirTeamClient, AirTeamClient>("AirTeamClient", httpClient =>
             {
-                httpClient.BaseAddress = new Uri(configuration.GetValue<string>("BaseUrl"));
+                httpClient.BaseAddress = new Uri(baseUrl);
             }).ConfigurePrimaryHttpMessageHandler(() =>
             {
                 return new HttpClientHandler() { UseProxy = false };
@@ -58,12 +65,19 @@ namespace AirTeamApi
                 if (!webHostEnvironment.IsDevelopment())
                 {
                     config.ClearProviders();
+                    
+                    var seq = configuration.GetConnectionString("Seq");
+                    if (seq is null)
+                    {
+                        Console.Error.WriteLine("invalid seq Connection string");
+                        throw new ArgumentNullException("seq connection string");
+                    }
 
                     Log.Logger = new LoggerConfiguration()
                         .MinimumLevel.Warning()
                         .Enrich.WithProperty("HostName", Environment.MachineName)
                         .Enrich.FromLogContext()
-                        .WriteTo.Seq(configuration.GetConnectionString("Seq"))
+                        .WriteTo.Seq(seq)
                         .CreateLogger();
 
                     config.AddSerilog();
