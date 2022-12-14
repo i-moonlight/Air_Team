@@ -1,4 +1,5 @@
 serviceName: seq
+host: logs.airimagefind.com
 image: 
   containerName: seq-instance
   repo: datalust/seq
