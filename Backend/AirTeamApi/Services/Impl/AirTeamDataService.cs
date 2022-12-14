@@ -10,26 +10,26 @@ using System.Web;
 
 namespace AirTeamApi.Services.Impl
 {
-    public class AirTeamService : IAirTeamService
+    public class AirTeamDataService : IAirTeamDataService
     {
-        private readonly IAirTeamHttpClient _AirTeamHttpClient;
-        private readonly IHtmlParseService _HtmlParserService;
-        private readonly IDistributedCache _Cache;
-        private readonly AirTeamSetting _AirTeamSetting;
+        private readonly IAirTeamClient _airTeamHttpClient;
+        private readonly IHtmlParseService _htmlParserService;
+        private readonly IDistributedCache _cache;
+        private readonly AirTeamSetting _airTeamSetting;
 
-        public AirTeamService(IDistributedCache cache, IAirTeamHttpClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> airTeamSetting)
+        public AirTeamDataService(IDistributedCache cache, IAirTeamClient httpClient, IHtmlParseService htmlParserService, IOptions<AirTeamSetting> airTeamSetting)
         {
             if (airTeamSetting == null)
                 throw new ArgumentNullException(nameof(airTeamSetting));
 
-            _AirTeamHttpClient = httpClient;
-            _HtmlParserService = htmlParserService;
-            _Cache = cache;
-            _AirTeamSetting = airTeamSetting.Value;
+            _airTeamHttpClient = httpClient;
+            _htmlParserService = htmlParserService;
+            _cache = cache;
+            _airTeamSetting = airTeamSetting.Value;
 
-            if (_AirTeamHttpClient.BaseUrl is null)
+            if (_airTeamHttpClient.BaseUrl is null)
             {
-                throw new ArgumentException(nameof(_AirTeamHttpClient.BaseUrl));
+                throw new ArgumentException(nameof(_airTeamHttpClient.BaseUrl));
             }
 
         }
@@ -43,7 +43,7 @@ namespace AirTeamApi.Services.Impl
 
             var searchString = keyword.Trim();
             string cacheString = GetCacheKey(searchString);
-            var htmlResponse = await _Cache.GetStringAsync(cacheString);
+            var htmlResponse = await _cache.GetStringAsync(cacheString);
 
             if (string.IsNullOrWhiteSpace(htmlResponse))
             {
@@ -55,8 +55,9 @@ namespace AirTeamApi.Services.Impl
                 MetricsDefinition.ApiCallCachedTotal.WithLabels(Environment.MachineName).Inc();
             }
 
-            var imageHtmlNodes = _HtmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
-            IEnumerable<ImageDto> images = imageHtmlNodes.Select(node => GetImageFromNode(node, _AirTeamHttpClient.BaseUrl));
+            var imageHtmlNodes = _htmlParserService.QuerySelectorAll(htmlResponse, ".thumb");
+            IEnumerable<ImageDto> images = imageHtmlNodes.Select(
+                node => GetImageFromNode(node, _airTeamHttpClient.BaseUrl));
 
             return images;
         }
@@ -69,14 +70,18 @@ namespace AirTeamApi.Services.Impl
         private async Task<string> GetFromAirTeamImages(string searchString)
         {
             using CancellationTokenSource httpTokenSource = new(20000);
-            var apiResponse = await _AirTeamHttpClient.SearchByKeyword(searchString, httpTokenSource.Token);
+            var apiResponse = await _airTeamHttpClient.SearchByKeyword(searchString, httpTokenSource.Token);
 
-            var resultDivision = _HtmlParserService.QuerySelector(apiResponse, "#lb-management-content");
+            var resultDivision = _htmlParserService.QuerySelector(apiResponse, "#lb-management-content");
             var resultHtml = resultDivision.WriteTo();
 
-            var cacheEntryOption = new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_AirTeamSetting.CacheExprationMinutes) };
+            var cacheEntryOption = new DistributedCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_airTeamSetting.CacheExprationMinutes)
+            };
+
             var cacheKey = GetCacheKey(searchString);
-            await _Cache.SetStringAsync(cacheKey, resultHtml, cacheEntryOption);
+            await _cache.SetStringAsync(cacheKey, resultHtml, cacheEntryOption);
             return resultHtml;
         }
 

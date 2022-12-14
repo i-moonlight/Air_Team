@@ -43,7 +43,8 @@ namespace AirTeamApi.Tests.IntegratedTest
             Assert.AreEqual(25, jArray.Count);
 
             var firstItem = jArray[0].ToObject<ImageDto>();
-
+            
+            Assert.IsNotNull(firstItem);
             Assert.AreEqual("353153", firstItem.ImageId);
             Assert.AreEqual("Boeing 777-9X", firstItem.Title);
             StringAssert.EndsWith(firstItem.BaseImageUrl, "pics/353/353153_200.jpg");

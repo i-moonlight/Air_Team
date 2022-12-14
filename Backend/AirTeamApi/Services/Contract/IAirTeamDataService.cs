@@ -2,7 +2,7 @@
 
 namespace AirTeamApi.Services.Contract
 {
-    public interface IAirTeamService
+    public interface IAirTeamDataService
     {
         Task<IEnumerable<ImageDto>> SearchByKeyword(string keyword);
     }

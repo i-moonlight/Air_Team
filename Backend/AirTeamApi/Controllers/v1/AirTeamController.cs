@@ -11,12 +11,12 @@ namespace AirTeamApi.Controllers.v1
     [Route("v1/[controller]")]
     public class AirTeamController : ControllerBase
     {
-        private readonly IAirTeamService AirTeamService;
-        private readonly ILogger<AirTeamController> Logger;
-        public AirTeamController(IAirTeamService airTeamService, ILogger<AirTeamController> logging)
+        private readonly IAirTeamDataService _airTeamService;
+        private readonly ILogger<AirTeamController> _logger;
+        public AirTeamController(IAirTeamDataService airTeamService, ILogger<AirTeamController> logging)
         {
-            AirTeamService = airTeamService;
-            Logger = logging;
+            _airTeamService = airTeamService;
+            _logger = logging;
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace AirTeamApi.Controllers.v1
         [HttpGet("testlog")]
         public void TestLog([Required(AllowEmptyStrings = false), MaxLength(100)] string message)
         {
-            Logger.LogWarning(message);
+            _logger.LogWarning(message);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace AirTeamApi.Controllers.v1
             if (keyword.Trim().Length < 3)
                 return new List<ImageDto>();
 
-            var result = await AirTeamService.SearchByKeyword(keyword);
+            var result = await _airTeamService.SearchByKeyword(keyword);
             return result;
         }
     }

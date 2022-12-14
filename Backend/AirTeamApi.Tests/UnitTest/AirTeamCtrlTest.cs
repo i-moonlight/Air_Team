@@ -21,7 +21,7 @@ namespace AirTeamApi.Tests.UnitTest
         [TestMethod]
         public async Task Search()
         {
-            var MockedClient = new Moq.Mock<IAirTeamHttpClient>();
+            var MockedClient = new Moq.Mock<IAirTeamClient>();
             var htmlParseService = new HtmlParseService();
             var MockedCache = new Moq.Mock<IDistributedCache>();
             var MockedIOptions = new Moq.Mock<IOptions<AirTeamSetting>>();
@@ -31,7 +31,7 @@ namespace AirTeamApi.Tests.UnitTest
 
             MockedIOptions.SetupGet(o => o.Value).Returns(new AirTeamSetting { CacheExprationMinutes = 15 });
 
-            var actualService = new AirTeamService(MockedCache.Object, MockedClient.Object, htmlParseService, MockedIOptions.Object);
+            var actualService = new AirTeamDataService(MockedCache.Object, MockedClient.Object, htmlParseService, MockedIOptions.Object);
 
             var airTeamController = new Controllers.v1.AirTeamController(actualService, mock.Object);
 

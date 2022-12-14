@@ -2,11 +2,11 @@
 
 namespace AirTeamApi.Services.Contract
 {
-    public interface IAirTeamHttpClient
+    public interface IAirTeamClient
     {
-        HttpClient HttpClient { get; }
         public Uri? BaseUrl { get; }
 
         Task<string> SearchByKeyword(string keyword, CancellationToken cancellationToken);
+        Task<bool> IsConnected();
     }
 }

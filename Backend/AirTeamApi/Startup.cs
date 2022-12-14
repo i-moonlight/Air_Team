@@ -45,13 +45,20 @@ namespace AirTeamApi
 
             services.AddAppLogging(Configuration, WebHostEnvironment);
 
+            var redis = Configuration.GetConnectionString("Redis");
+            if (redis is null)
+            {
+                Console.Error.WriteLine("invalid redis Connection string");
+                throw new ArgumentNullException("redis connection string");
+            }
+
             services.AddHealthChecks()
-                .AddRedis(Configuration.GetConnectionString("Redis"))
+                .AddRedis(redis)
                 .AddCheck<UriHealthCheck>("airteamimages.com_site");
 
             services.AddSingleton(Configuration);
 
-            services.AddScoped<IAirTeamService, AirTeamService>();
+            services.AddScoped<IAirTeamDataService, AirTeamDataService>();
             services.AddScoped<IHtmlParseService, HtmlParseService>();
 
         }
