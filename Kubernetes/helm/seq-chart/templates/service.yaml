@@ -3,15 +3,13 @@ kind: Service
 metadata:
   name: {{ .Values.serviceName }}
 spec:  
-  type: "NodePort"
+  type: ClusterIP
   selector:
     {{- include "labeltemplate" .Values.labels | indent 4 }}
   ports:   
     - port: 5341
       protocol: TCP
       name: ingestion
-      nodePort: 30273
     - port: 80
       protocol: TCP
       name: ui
-      nodePort: 30017
