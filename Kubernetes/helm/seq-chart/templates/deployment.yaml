@@ -38,4 +38,4 @@ spec:
       volumes:
         - name: seqdata
           persistentVolumeClaim:
-            claimName: seqpvc
+            claimName: seq-data
