@@ -125,7 +125,6 @@
       }
     }
   },
-  "defaultProject": "AirTeamUI",
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"
